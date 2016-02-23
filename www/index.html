@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+		<title></title>
+
+		<link href="lib/ionic/css/ionic.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+
+		<!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+		<link href="css/ionic.app.css" rel="stylesheet">
+		-->
+
+		<!-- ionic/angularjs js -->
+		<script src="lib/ionic/js/ionic.bundle.js"></script>
+
+		<!-- cordova script (this will be a 404 during development) -->
+		<script src="cordova.js"></script>
+
+		 <!-- JQuery -->
+		<script src="js/jquery-2.2.0.js"></script>
+
+		<!--Bootstrap CSS-->
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+ 
+		<!--Bootstrap JS-->
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+		<!-- your app's js -->
+		<script src="js/app.js"></script>
+
+		<script>
+		var streamButton = document.getElementById( 'stream_button' );
+		var playlistsButton = document.getElementById( 'playlists_button' );
+		var contactButton = document.getElementById( 'contact_button' );
+
+		var streamContent = document.getElementById( 'stream_content' );
+		var playlistsContent = document.getElementById( 'playlists_content' );
+		var contactContent = document.getElementById( 'contact_content' );
+		//activates the tab indicated by the tab parameter and hides the others content
+		//tab options: STREAM, PLAYLISTS, CONTACT
+		function setTab(tab)
+		{
+			switch(tab)
+			{
+				case "STREAM":
+						playlistsContent.style.display = "none";
+						contactContent.style.display = "none";
+						streamContent.style.display = "block";
+					break;
+				case "PLAYLISTS":
+						contactContent.style.display = "none";
+						streamContent.style.display = "none";
+						playlistsContent.style.display = "block";
+					break;
+				case "CONTACT":
+						streamContent.style.display = "none";
+						playlistsContent.style.display = "none";
+						contactContent.style.display = "block";
+					break;
+			}
+		}
+		</script>
+
+	</head>
+	<body ng-app="starter">
+
+		<ion-pane>
+			<ion-header-bar class="bar-stable">
+				<h1 class="title">90.7 KJHK</h1>
+			</ion-header-bar>
+			<ion-content>
+
+				<div id="tabs">
+				
+					<div onclick="setTab('STREAM');" id="stream_tab" class="tab active_tab">Stream</div>
+					<div onclick="setTab('PLAYLISTS');" id="playlists_tab" class="tab">Playlists</div>
+					<div onclick="setTab('CONTACT');" id="contact_tab" class="tab">Contact</div>
+						
+				</div>
+				
+				<div id="stream_content" class="content active_content">
+					<h1 id="headline" align="center">
+						<br><br>KJHK Stream
+						</h1>
+
+						<audio id="music" preload="all">
+							<source src="http://kjhkstream.org:8000/stream_low">
+						</audio>
+
+						<div id="audioplayer">
+							<button id="pButton" class="play" onclick="play()"></button>
+						</div>
+				</div>
+
+				<div id="playlists_content" class="content">
+					<div style="width: 100%">
+						<div class="material_card">
+							<h3>Music Logs for 2-14-16</h3>
+						</div>
+						<div id="music_logs">
+							</div>
+					</div>
+				</div>
+
+				<div id="contact_content" class="content">contact</div>
+
+				
+
+			</ion-content>
+		</ion-pane>
+	</body>
+
+	<script>
+	
+	/******TAB STUFF******/
+	
+	var streamTab = document.getElementById( 'stream_tab' );
+	var playlistsTab = document.getElementById( 'playlists_tab' );
+	var contactTab = document.getElementById( 'contact_tab' );
+
+	var streamContent = document.getElementById( 'stream_content' );
+	var playlistsContent = document.getElementById( 'playlists_content' );
+	var contactContent = document.getElementById( 'contact_content' );
+
+	//activates the tab indicated by the tab parameter and hides the others content
+	//tab options: STREAM, PLAYLISTS, CONTACT
+	function setTab(tab)
+	{
+
+		switch(tab)
+		{
+			case "STREAM":
+
+				streamTab.classList.add('active_tab');
+				playlistsTab.classList.remove('active_tab');
+				contactTab.classList.remove('active_tab');
+
+				streamContent.classList.add('active_content');
+				playlistsContent.classList.remove('active_content');
+				contactContent.classList.remove('active_content');
+				break;
+			case "PLAYLISTS":
+				streamTab.classList.remove('active_tab');
+				playlistsTab.classList.add('active_tab');
+				contactTab.classList.remove('active_tab');
+
+				streamContent.classList.remove('active_content');
+				playlistsContent.classList.add('active_content');
+				contactContent.classList.remove('active_content');
+				break;
+			case "CONTACT":
+				streamTab.classList.remove('active_tab');
+				playlistsTab.classList.remove('active_tab');
+				contactTab.classList.add('active_tab');
+
+				streamContent.classList.remove('active_content');
+				playlistsContent.classList.remove('active_content');
+				contactContent.classList.add('active_content');
+				break;
+		}
+	}
+
+	/******STREAM STUFF******/
+
+	var music = document.getElementById('music'); // id for audio element
+	var duration; // Duration of audio clip
+	var pButton = document.getElementById('pButton'); // play button
+
+	//Play and Pause
+	function play() {
+		// start music
+		if (music.paused) {
+		music.play();
+		// remove play, add pause
+		pButton.className = "";
+		pButton.className = "pause";
+		} else { // pause music
+		music.pause();
+		// remove pause, add play
+		pButton.className = "";
+		pButton.className = "play";
+		}
+	}
+
+	// Gets audio file duration
+	music.addEventListener("canplaythrough", function () {
+		duration = music.duration;  
+	}, false);
+
+
+	/******PLAYLIST STUFF******/
+
+	function getCleanDate(rawDate)
+	{
+		var cleanDate = new Date(   rawDate.substring(0, 4), 
+									rawDate.substring(5, 7), 
+									rawDate.substring(8, 10),
+									rawDate.substring(11, 13),
+									rawDate.substring(14, 16),
+									rawDate.substring(17));
+		return cleanDate;
+	}
+
+	function getTwelveHourTime(hours, minutes)
+	{
+		if(minutes < 10)
+		{
+			minutes = "0" + minutes;
+		}
+		if(hours>11)
+		{
+			return (hours % 12 + 1) + ":" + minutes + " pm";
+		}
+		else
+		{
+			return (hours + 1) + ":" + minutes + " am";
+		}
+	}
+
+	function getMusicLogs()
+	{
+
+	$.getJSON( "http://kjhk.org/web/app_resources/log-music-test-2-14-16.json", function( data ) {
+			var target = document.getElementById('music_logs');
+			$.each( data, function( key, entry ) {
+				var items = [];
+				items.push( '<div class="material_card music_card">' );
+				var myDate = getCleanDate(entry.Entry_Date);
+				var dateStr = getTwelveHourTime(myDate.getHours(), myDate.getMinutes());
+
+				items.push( "<h5>" + dateStr + "</h5>");
+				items.push( "<p>" + entry.Song + "<br> by " + entry.Artist + "<br>");
+				items.push( '<i class="album-text">from ' + entry.Album + "</i></p>");
+
+				items.push( "</div>");
+				target.innerHTML += items.join( "" );
+			});
+			items.push('</table>');
+		})
+	}
+	getMusicLogs();
+</script>
+
+</html>
