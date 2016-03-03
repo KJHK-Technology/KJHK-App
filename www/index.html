@@ -6,7 +6,7 @@
 		<title></title>
 
 		<link href="lib/ionic/css/ionic.css" rel="stylesheet">
-		<link href="css/style.css" rel="stylesheet">
+		<link href="css/dark-style.css" rel="stylesheet">
 
 		<!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
 		<link href="css/ionic.app.css" rel="stylesheet">
@@ -30,44 +30,11 @@
 		<!-- your app's js -->
 		<script src="js/app.js"></script>
 
-		<script>
-		var streamButton = document.getElementById( 'stream_button' );
-		var playlistsButton = document.getElementById( 'playlists_button' );
-		var contactButton = document.getElementById( 'contact_button' );
-
-		var streamContent = document.getElementById( 'stream_content' );
-		var playlistsContent = document.getElementById( 'playlists_content' );
-		var contactContent = document.getElementById( 'contact_content' );
-		//activates the tab indicated by the tab parameter and hides the others content
-		//tab options: STREAM, PLAYLISTS, CONTACT
-		function setTab(tab)
-		{
-			switch(tab)
-			{
-				case "STREAM":
-						playlistsContent.style.display = "none";
-						contactContent.style.display = "none";
-						streamContent.style.display = "block";
-					break;
-				case "PLAYLISTS":
-						contactContent.style.display = "none";
-						streamContent.style.display = "none";
-						playlistsContent.style.display = "block";
-					break;
-				case "CONTACT":
-						streamContent.style.display = "none";
-						playlistsContent.style.display = "none";
-						contactContent.style.display = "block";
-					break;
-			}
-		}
-		</script>
-
 	</head>
 	<body ng-app="starter">
 
 		<ion-pane>
-			<ion-header-bar class="bar-stable">
+			<ion-header-bar class="bar-stable" id="header-bar">
 				<h1 class="title">90.7 KJHK</h1>
 			</ion-header-bar>
 			<ion-content>
@@ -96,6 +63,7 @@
 
 				<div id="playlists_content" class="content">
 					<div style="width: 100%">
+						<br>
 						<div class="material_card">
 							<h3>Music Logs for 2-14-16</h3>
 						</div>

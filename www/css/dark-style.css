@@ -5,10 +5,17 @@
 h1, h2, h3, h4, h5, h6{
 	font-weight: bolder !important;
 	font-family: "Montserrat";
+	color: #FFFFFF;
 }
 
 body{
-	background-color: #EEE;
+	background-color: #374747;
+	font-family: "Montserrat";
+}
+
+#header-bar{
+	background-color: #101415;
+	color: #FFFFFF;
 }
 
 /******Tab Interface******/
@@ -17,6 +24,7 @@ body{
 	height: 10%;
 	text-align: center;
 	margin: 0px;
+	background-color: #374747;
 }
 
 .tab{
@@ -24,20 +32,20 @@ body{
 	display: inline-block;
 	width: 32%;
 	height: 100%;
-	color: #fff;
-	background-color: #b3b3b3;
+	color: #FFFFFF;
+	background-color: #374747;
 }
 
 .active_tab{
-	color: #dc446e;
-  	background-color: #e7e7e7;
+	color: #ffffff;
+  	background-color: #1B2527;
 }
 
 .content{
 	display: none;
 	width: 100%;
 	height: 100%;
-	background-color: #e7e7e7;
+	background-color: #1B2527;
 }
 
 .active_content{
@@ -63,7 +71,8 @@ body{
 }
 
 .material_card{
-	background: #FDFDFD;
+	background-color: #374747;
+	color: #FFFFFF;
 	width: 90%;
 	margin: 0 auto 0 auto;
 	padding: 10px;
@@ -97,12 +106,17 @@ body{
 	text-align: left;
 }
 
+#music_logs{
+	background-color: 374747;
+}
+
 /******Stream Player Stuff******/
 
 #headline
 {
 	font-family: "Montserrat";
 	font-size: 40px;
+	color: #FFFFFF;
 }
 
 #audioplayer{
