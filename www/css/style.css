@@ -105,24 +105,26 @@ body{
 	font-size: 40px;
 }
 
-#audioplayer{
+#audioUI{
 	width: 250px;
 	height: 250px;
 	margin: 50px auto auto auto;
 	border: none;
 }
 
-#pButton{
-    height:250px; 
+#play-button{
+    height:250px;
     width: 250px;
     border: none;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    float:left;
     outline:none;
+		z-index: 1;
 }
 
-.play{background: url('http://kjhk.org/web/wp-content/uploads/2015/09/streamplay-300x300.png') ;}
-.pause{background: url('http://kjhk.org/web/wp-content/uploads/2015/09/streampause-300x300.png') ;}
-
+#stream-load{
+		position: absolute;
+		z-index: 2;
+}
+#spinner-container{
+		position: absolute;
+		z-index: 2;
+}
