@@ -1,72 +1,79 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-		<title></title>
 
-    <link rel="stylesheet" href="css/style.css">
-    <!-- compiled css output -->
-		<link href="css/ionic.app.css" rel="stylesheet">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+	<title></title>
 
-		<!-- ionic/angularjs js -->
-		<script src="lib/ionic/js/ionic.bundle.js"></script>
+	<link rel="stylesheet" href="css/style.css">
+	<!-- compiled css output -->
+	<link href="css/ionic.app.css" rel="stylesheet">
 
-		<!-- cordova script (this will be a 404 during development) -->
-		<script src="cordova.js"></script>
+	<!-- ionic/angularjs js -->
+	<script src="lib/ionic/js/ionic.bundle.js"></script>
 
-		 <!-- JQuery -->
-		<script src="js/jquery-2.2.0.js"></script>
+	<!-- cordova script (this will be a 404 during development) -->
+	<script src="cordova.js"></script>
+
+	<!-- JQuery -->
+	<script src="js/jquery-2.2.0.js"></script>
 
 
-		<!-- your app's js -->
-		<script src="js/app.js"></script>
+	<!-- your app's js -->
+	<script src="js/app.js"></script>
 
-	</head>
-	<body ng-app="starter">
+</head>
 
-		<ion-pane>
-			<ion-header-bar class="bar-dark" id="header-bar">
-				<h1 class="title">KJHK</h1>
-			</ion-header-bar>
-			<ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
+<body ng-app="starter">
 
-			  <ion-tab class="balanced" title="STREAM" icon-on="ion-ios-filing" icon-off="ion-ios-filing-outline">
-			    <!-- Tab 1 content -->
-					<div class="content-container">
+	<ion-pane>
+		<ion-header-bar class="bar-dark" id="header-bar">
+			<h1 class="title">KJHK</h1>
+		</ion-header-bar>
+		<ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
 
-	          <div id="audioUI">
-							<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
-							<div id="pause-container">
-								<image src="img/pause.svg" width="200px" height="200px" id="pause-button" onclick="play()" class="ng-hide"></image>
-								<ion-spinner id="stream-spinner" class="ng-hide"></ion-spinner>
-							</div>
+			<ion-tab class="balanced" title="STREAM" icon-on="ion-ios-filing" icon-off="ion-ios-filing-outline">
+				<!-- Tab 1 content -->
+				<div class="content-container">
+
+					<div id="audioUI">
+						<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
+						<div id="pause-container">
+							<image src="img/pause.svg" width="200px" height="200px" id="pause-button" onclick="play()" class="ng-hide"></image>
+							<ion-spinner id="stream-spinner" class="ng-hide"></ion-spinner>
 						</div>
-
-						<div id="audioplayer">
-						</div>
-
 					</div>
-			  </ion-tab>
 
-			  <ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-clock" icon-off="ion-ios-clock-outline" on-select="changeDay(0)">
-			    <!-- Tab 2 content -->
-					<div class="content-container">
+					<div id="audioplayer">
+					</div>
+
+				</div>
+			</ion-tab>
+
+			<ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-clock" icon-off="ion-ios-clock-outline" on-select="changeDay(0)">
+				<!-- Tab 2 content -->
+				<div id="music-logs-container" class="content-container" ng-load="loadPlaylists()">
+					<div id="music-logs-head">
 						<div>
-							<h3>Music Logs for <div id="music_log_date"></div></h3>
+							<h3>Music Logs for <div id="music-log-date"></div></h3>
 						</div>
-						<div id="music_logs_buttons">
-							<button onclick="changeDay(-1)" class="button music-logs-button" id="music_logs_prev">&lt</button>
-							<button onclick="changeDay(1)" class="button music-logs-button" id="music_logs_next">&gt</button>
-						</div>
-						<div id="music_logs">
+						<div id="music-logs-buttons">
+							<button onclick="changeDay(-1)" class="button music-logs-button" id="music-logs-prev">&lt</button>
+							<button onclick="changeDay(1)" class="button music-logs-button" id="music-logs-next">&gt</button>
 						</div>
 					</div>
-			  </ion-tab>
+					<ion-scroll id="music-logs-scroll" zooming="true" direction="y" on-swipe-right="changeDay(-1)" on-drag-right="changeDay(-1)" on-swipe-left="changeDay(1)" on-drag-left="changeDay(1)">
+						<ion-spinner id="music-logs-spinner" class="ng-hide"></ion-spinner>
+						<div id="music-logs">
+						</div>
+					</ion-scroll>
+				</div>
+			</ion-tab>
 
-			  <ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
-			    <!-- Tab 3 content -->
-					<h2>Contact test</h3>
+			<ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
+				<!-- Tab 3 content -->
+				<h2>Contact test</h3>
 					<h3>Request Line: <a href="tel:785-864-4747">785-864-4747</a></h3>
 			  </ion-tab>
 

@@ -7,10 +7,8 @@ var playing = false;
 var timeout;
 
 //Play and Pause
-function play()
-{
-  if(!playing)
-  { //Start the music by creating a new <audio> element
+function play() {
+  if (!playing) { //Start the music by creating a new <audio> element
     streamPlayer = document.createElement('audio');
     var source = document.createElement('source');
     source.setAttribute('src', 'http://kjhkstream.org:8000/stream_low');
@@ -19,36 +17,31 @@ function play()
 
     document.getElementById('audioplayer').appendChild(streamPlayer);
 
-    timeout = setTimeout(function()
-    {
+    timeout = setTimeout(function() {
       streamPlayer.addEventListener('canplay',
-      function()
-      {
-        document.getElementById('stream-spinner').classList.add('ng-hide');
-        streamPlayer.play();
-      }, 20000);});
+        function() {
+          document.getElementById('stream-spinner').classList.add('ng-hide');
+          streamPlayer.play();
+        }, 20000);
+    });
 
     // Hides spinner, starts playback
     streamPlayer.addEventListener('canplaythrough',
-      function()
-      {
-        if(streamPlayer.played.length == 0)
-        {
+      function() {
+        if (streamPlayer.played.length == 0) {
           clearTimeout(timeout);
           document.getElementById('stream-spinner').classList.add('ng-hide');
           streamPlayer.play();
         }
-      },false);
+      }, false);
 
     streamPlayer.addEventListener("waiting",
-      function()
-      {
+      function() {
         document.getElementById('stream-spinner').classList.remove('ng-hide');
-      },false);
+      }, false);
 
     streamPlayer.addEventListener("playing",
-      function()
-      {
+      function() {
         document.getElementById('stream-spinner').classList.add('ng-hide');
       }, false);
 
@@ -58,9 +51,7 @@ function play()
     document.getElementById('pause-button').classList.remove('ng-hide');
     document.getElementById('stream-spinner').classList.remove('ng-hide');
     playing = true;
-  }
-  else
-  { //Destroy the <audio> element so that it doesn't keep using data while paused
+  } else { //Destroy the <audio> element so that it doesn't keep using data while paused
     streamPlayer.pause();
     var source = streamPlayer.firstElementChild;
     source.setAttribute('src', '');
