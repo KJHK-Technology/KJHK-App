@@ -1,65 +1,80 @@
 /******STREAM STUFF******/
 
-const streamLoadHTML = '<ion-spinner id="stream-load" icon="lines"></ion-spinner>';
-
-const playButton = document.getElementById('play-button'); //Play button
-
-const streamPlayerContainer = document.getElementById('audioplayer'); //Container for <audio> element
-
-const spinnerContainer = document.getElementById("spinner-container");
-
 var streamPlayer = null; //The Element object of the <audio> element, set to null when the stream is paused
 
 var playing = false;
 
+var timeout;
+
 //Play and Pause
 function play()
 {
-  if(!playing) //Start the music by creating a new <audio> element
-  {
+  if(!playing)
+  { //Start the music by creating a new <audio> element
     streamPlayer = document.createElement('audio');
     var source = document.createElement('source');
     source.setAttribute('src', 'http://kjhkstream.org:8000/stream_low');
     streamPlayer.appendChild(source);
-    //streamPlayer.setAttribute('preload', 'all');
     streamPlayer.setAttribute('id', 'streamPlayer');
 
-    streamPlayerContainer.appendChild(streamPlayer);
+    document.getElementById('audioplayer').appendChild(streamPlayer);
 
-    //Shows spinner
-    streamPlayer.addEventListener("loadstart",
+    timeout = setTimeout(function()
+    {
+      streamPlayer.addEventListener('canplay',
       function()
       {
-        spinnerContainer.innerHTML = streamLoadHTML;
-      },false);
+        document.getElementById('stream-spinner').classList.add('ng-hide');
+        streamPlayer.play();
+      }, 20000);});
 
     // Hides spinner, starts playback
-    streamPlayer.addEventListener("canplaythrough",
+    streamPlayer.addEventListener('canplaythrough',
       function()
       {
-        spinnerContainer.innerHTML = "";
-        streamPlayer.play();
+        if(streamPlayer.played.length == 0)
+        {
+          clearTimeout(timeout);
+          document.getElementById('stream-spinner').classList.add('ng-hide');
+          streamPlayer.play();
+        }
       },false);
 
-  	//Switch playButton appearance to pause
-  	playButton.setAttribute('href', 'img/pause.svg');
+    streamPlayer.addEventListener("waiting",
+      function()
+      {
+        document.getElementById('stream-spinner').classList.remove('ng-hide');
+      },false);
+
+    streamPlayer.addEventListener("playing",
+      function()
+      {
+        document.getElementById('stream-spinner').classList.add('ng-hide');
+      }, false);
+
+    console.log('Changing button image to pause');
+    //Switch play button appearance to pause
+    document.getElementById('play-button').classList.add('ng-hide');
+    document.getElementById('pause-button').classList.remove('ng-hide');
+    document.getElementById('stream-spinner').classList.remove('ng-hide');
     playing = true;
   }
   else
   { //Destroy the <audio> element so that it doesn't keep using data while paused
-  	streamPlayer.pause();
+    streamPlayer.pause();
     var source = streamPlayer.firstElementChild;
     source.setAttribute('src', '');
     streamPlayer.load();
-    streamPlayerContainer.removeChild(streamPlayer);
+    document.getElementById('audioplayer').removeChild(streamPlayer);
     streamPlayer = null; //This deletes all associated event listeners as well
 
     //Do this to make sure the spinner doesn't get left on screen if the play button is pressed before loading is finished
-    spinnerContainer.innerHTML = "";
+    document.getElementById('stream-spinner').classList.add('ng-hide');
 
-    console.log('Changing play button image');
-  	// Switch playButton appearance to play
-  	playButton.setAttribute('href', 'img/play.svg');
+    console.log('Changing button image to play');
+    // Switch play button appearance to play
+    document.getElementById('pause-button').classList.add('ng-hide');
+    document.getElementById('play-button').classList.remove('ng-hide');
     playing = false;
   }
 }

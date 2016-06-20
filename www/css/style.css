@@ -1,100 +1,49 @@
-@import url('http://fonts.googleapis.com/css?family=Montserrat');
-
 /******General Stuff******/
 
 h1, h2, h3, h4, h5, h6{
 	font-weight: bolder !important;
-	font-family: "Montserrat";
+	font-family: sans-serif;
+	color: #DBE0E3 !important;
 }
 
-body{
-	background-color: #EEE;
-}
-
-/******Tab Interface******/
-
-#tabs{
-	height: 10%;
-	text-align: center;
-	margin: 0px;
-}
-
-.tab{
-	margin: 0px;
-	display: inline-block;
-	width: 32%;
+.content-container{
+	background-color: #373D44 !important;
+	padding-top: 90px;
 	height: 100%;
-	color: #fff;
-	background-color: #b3b3b3;
-}
-
-.active_tab{
-	color: #dc446e;
-  	background-color: #e7e7e7;
-}
-
-.content{
-	display: none;
 	width: 100%;
-	height: 100%;
-	background-color: #e7e7e7;
+	z-index: -10;
 }
 
-.active_content{
-	display: inline-block;
+.tabs.tab-nav{
+	box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.19);
 }
 
-#stream_button{
-}
-
-#playlists_button{
-}
-
-#contact_button{
-}
-
-/******Material Design Stuff******/
-
-.material_object{
-	border-radius: 2px;
-	display: block;
-	margin: 1rem;
-	box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.19);
-}
-
-.material_card{
-	background: #FDFDFD;
-	width: 90%;
-	margin: 0 auto 0 auto;
-	padding: 10px;
-	border-radius: 2px;
-	display: block;
-	box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.19);
-}
-.material_card:hover{
-	box-shadow: 0px 2px 2px 2px rgba(0,0,0,0.19);
-}
-
-.material_button{
-	border-radius: 2px;
-	margin: 1rem;
-	box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.19);
-}
-.material_button:hover{
-	box-shadow: 0px 2px 2px 2px rgba(0,0,0,0.19);
+ionspinner svg {
+	width: 100px;
+	height: 100px;
 }
 
 /******Playlists Stuff******/
 
-.album-text{
-	font-size: .8em;
-	margin-left: 2em;
+.music-entry{
+	display: block;
+	padding: 5%;
+	width: 100%;
+	text-align: left;
+	color: #FFF;
+	background-color: #F00;
 }
 
-.music_card{
-	padding: 0px 10px 0px 10px;
-	margin: 5px auto 0 auto;
-	text-align: left;
+.bg-1{
+	background-color: #374244;
+}
+
+.bg-2{
+	background-color: #1B2527;
+}
+
+.music-logs-button{
+	color: #DBE0E3 !important;
 }
 
 /******Stream Player Stuff******/
@@ -106,25 +55,42 @@ body{
 }
 
 #audioUI{
-	width: 250px;
-	height: 250px;
-	margin: 50px auto auto auto;
+	width: 100%;
 	border: none;
+	position: fixed;
+	top: 40%;
 }
 
 #play-button{
-    height:250px;
-    width: 250px;
-    border: none;
-    outline:none;
-		z-index: 1;
+	position: relative;
+	display: block;
+	margin: auto;
+	z-index: 1;
+	fill: #DBE0E3;
+	box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.19);
+	border-radius: 50%;
 }
 
-#stream-load{
-		position: absolute;
-		z-index: 2;
+#pause-container{
+	position: relative;
+	text-align: center;
+	width: 100%;
 }
-#spinner-container{
-		position: absolute;
-		z-index: 2;
+
+#pause-button{
+	display: block;
+	margin: auto;
+	text-align: center;
+	z-index: 1;
+	fill: #DBE0E3;
+	box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.19);
+	border-radius: 50%;
+}
+
+#stream-spinner{
+	position: absolute;
+	top: 80px;
+	left: 45%;
+	width: 10%;
+	z-index: 10;
 }

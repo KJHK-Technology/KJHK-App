@@ -6,8 +6,8 @@ var logDay = 0;
 
 function getCleanDate(rawDate)
 {
-	var cleanDate = new Date(   rawDate.substring(0, 4), 
-								rawDate.substring(5, 7), 
+	var cleanDate = new Date(   rawDate.substring(0, 4),
+								rawDate.substring(5, 7),
 								rawDate.substring(8, 10),
 								rawDate.substring(11, 13),
 								rawDate.substring(14, 16),
@@ -44,18 +44,20 @@ function getMusicLogs(day)
 	var target = document.getElementById('music_logs');
 	target.innerHTML = spinnerHTML;
 
-$.getJSON( "http://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function( data ) {
-
+	$.getJSON( "http://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function( data )
+	{
 		var logs = "";
+		var iter = false;
 		$.each( data, function( key, entry ) {
+			var bgClass = iter ? "bg-1" : "bg-2";
+			iter = !iter;
 			var items = [];
-			items.push( '<div class="material_card music_card">' );
+			items.push( '<div class="music-entry ' + bgClass + '">' );
 			var myDate = getCleanDate(entry.Entry_Date);
-			var dateStr = myDate.getHours() + ':' + myDate.getMinutes() + ' -- ' + getTwelveHourTime(myDate.getHours(), myDate.getMinutes());
+			var dateStr = getTwelveHourTime(myDate.getHours(), myDate.getMinutes());
 
 			items.push( "<h5>" + dateStr + "</h5>");
-			items.push( "<p>" + entry.Song + "<br> by " + entry.Artist + "<br>");
-			items.push( '<i class="album-text">from ' + entry.Album + "</i></p>");
+			items.push( "<p>" + entry.Song + "<br> by " + entry.Artist + "<br><i>from " + entry.Album + "</i></p>");
 
 			items.push( "</div>");
 			logs += items.join( "" );
@@ -79,10 +81,7 @@ function changeDay(num)
 		logDay += num;
 	}
 
-	if(oldDay != logDay)
-	{
-		getMusicLogs(logDay);
-	}
+	getMusicLogs(logDay);
 }
 
-getMusicLogs(logDay);	
+getMusicLogs(logDay);

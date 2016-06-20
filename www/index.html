@@ -5,12 +5,9 @@
 		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 		<title></title>
 
-		<link href="lib/ionic/css/ionic.css" rel="stylesheet">
-		<link href="css/dark-style.css" rel="stylesheet">
-
-		<!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link rel="stylesheet" href="css/style.css">
+    <!-- compiled css output -->
 		<link href="css/ionic.app.css" rel="stylesheet">
-		-->
 
 		<!-- ionic/angularjs js -->
 		<script src="lib/ionic/js/ionic.bundle.js"></script>
@@ -21,11 +18,6 @@
 		 <!-- JQuery -->
 		<script src="js/jquery-2.2.0.js"></script>
 
-		<!--Bootstrap CSS-->
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-
-		<!--Bootstrap JS-->
-		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 		<!-- your app's js -->
 		<script src="js/app.js"></script>
@@ -34,53 +26,53 @@
 	<body ng-app="starter">
 
 		<ion-pane>
-			<ion-header-bar class="bar-stable" id="header-bar">
-				<h1 class="title">90.7 KJHK</h1>
+			<ion-header-bar class="bar-dark" id="header-bar">
+				<h1 class="title">KJHK</h1>
 			</ion-header-bar>
-			<ion-content>
+			<ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
 
-				<div id="tabs">
+			  <ion-tab class="balanced" title="STREAM" icon-on="ion-ios-filing" icon-off="ion-ios-filing-outline">
+			    <!-- Tab 1 content -->
+					<div class="content-container">
 
-					<div onclick="setTab('STREAM');" id="stream_tab" class="tab active_tab">Stream</div>
-					<div onclick="setTab('PLAYLISTS');" id="playlists_tab" class="tab">Playlists</div>
-					<div onclick="setTab('CONTACT');" id="contact_tab" class="tab">Contact</div>
+	          <div id="audioUI">
+							<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
+							<div id="pause-container">
+								<image src="img/pause.svg" width="200px" height="200px" id="pause-button" onclick="play()" class="ng-hide"></image>
+								<ion-spinner id="stream-spinner" class="ng-hide"></ion-spinner>
+							</div>
+						</div>
 
-				</div>
+						<div id="audioplayer">
+						</div>
 
-				<div id="stream_content" class="content active_content">
-					<h1 id="headline" align="center">
-					<br><br>KJHK Stream
-					</h1>
-
-					<div id="audioplayer">
 					</div>
+			  </ion-tab>
 
-					<div id="audioUI">
-						<div id="spinner-container"></div>
-						<button id="play-button" class="play" onclick="play()"></button>
-					</div>
-				</div>
-
-				<div id="playlists_content" class="content">
-					<div style="width: 100%">
-						<br>
-						<div class="material_card">
+			  <ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-clock" icon-off="ion-ios-clock-outline" on-select="changeDay(0)">
+			    <!-- Tab 2 content -->
+					<div class="content-container">
+						<div>
 							<h3>Music Logs for <div id="music_log_date"></div></h3>
 						</div>
 						<div id="music_logs_buttons">
-							<button onclick="changeDay(-1)" class="music_logs_button" id="music_logs_prev">&lt</button>
-							<button onclick="changeDay(1)" class="music_logs_button" id="music_logs_next">&gt</button>
+							<button onclick="changeDay(-1)" class="button music-logs-button" id="music_logs_prev">&lt</button>
+							<button onclick="changeDay(1)" class="button music-logs-button" id="music_logs_next">&gt</button>
 						</div>
 						<div id="music_logs">
 						</div>
 					</div>
-				</div>
+			  </ion-tab>
 
-				<div id="contact_content" class="content">contact</div>
-			</ion-content>
+			  <ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
+			    <!-- Tab 3 content -->
+					<h2>Contact test</h3>
+					<h3>Request Line: <a href="tel:785-864-4747">785-864-4747</a></h3>
+			  </ion-tab>
+
+			</ion-tabs>
 		</ion-pane>
 	</body>
-	<script src="js/ui.js"></script>
 	<script src="js/stream.js"></script>
 	<script src="js/playlists.js"></script>
 </html>
