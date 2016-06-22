@@ -64,8 +64,11 @@
 						</div>
 					</div>
 					<ion-scroll id="music-logs-scroll" zooming="true" direction="y" on-swipe-right="changeDay(-1)" on-drag-right="changeDay(-1)" on-swipe-left="changeDay(1)" on-drag-left="changeDay(1)">
-						<ion-spinner id="music-logs-spinner" class="ng-hide"></ion-spinner>
-						<div id="music-logs">
+						<ion-spinner id="music-logs-spinner"></ion-spinner>
+						<div id="music-logs-loading" class="ng-hide">
+						</div>
+						<div id="music-logs-wrapper">
+							<div id="music-logs"></div>
 						</div>
 					</ion-scroll>
 				</div>
@@ -73,13 +76,17 @@
 
 			<ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
 				<!-- Tab 3 content -->
-				<h2>Contact test</h3>
-					<h3>Request Line: <a href="tel:785-864-4747">785-864-4747</a></h3>
-			  </ion-tab>
 
-			</ion-tabs>
-		</ion-pane>
-	</body>
+				<h2>Contact test</h2>
+				<h3>Request Line: <a href="tel:785-864-4747">785-864-4747</a></h3>
+			</ion-tab>
+
+		</ion-tabs>
+	</ion-pane>
+</body>
+<!--
 	<script src="js/stream.js"></script>
 	<script src="js/playlists.js"></script>
+	-->
+
 </html>
