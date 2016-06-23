@@ -38,11 +38,15 @@
 				<div class="content-container">
 
 					<div id="audioUI">
-						<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
-						<div id="pause-container">
-							<image src="img/pause.svg" width="200px" height="200px" id="pause-button" onclick="play()" class="ng-hide"></image>
+						<div id="play-pause-container">
+							<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
+							<image id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"></image>
 							<ion-spinner id="stream-spinner" class="ng-hide"></ion-spinner>
 						</div>
+					</div>
+					<div id="current-song">
+						<h2 id="nowplaying-song" class="nowplaying"></h2>
+						<h3 id="nowplaying-artist" class="nowplaying"></h3>
 					</div>
 
 					<div id="audioplayer">

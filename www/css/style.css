@@ -117,32 +117,46 @@ h1, h2, h3, h4, h5, h6 {
     position: fixed;
     top: 40%;
 }
-#play-button {
-    position: relative;
-    display: block;
-    margin: auto;
-    z-index: 1;
-    fill: #DBE0E3;
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.19);
-    border-radius: 50%;
-}
-#pause-container {
+#play-pause-container {
     position: relative;
     text-align: center;
     width: 100%;
 }
+#play-button {
+    display: block;
+    margin: -50px auto auto auto;
+    z-index: 1;
+    fill: #DBE0E3;
+    box-shadow: 0px 1px 5px 2px rgba(0, 0, 0, 0.19);
+    border-radius: 50%;
+}
 #pause-button {
     display: block;
-    margin: auto;
+    margin: -50px auto auto auto;
     text-align: center;
     z-index: 1;
     fill: #DBE0E3;
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.19);
+    box-shadow: 0px 1px 5px 2px rgba(0, 0, 0, 0.19);
     border-radius: 50%;
 }
 #stream-spinner {
     position: absolute;
     left: 50%
-    margin-left: -50px;
+    margin-left: -100px;
     z-index: 10;
+}
+#current-song {
+    position: absolute;
+    bottom: 45px;
+    width: 100%;
+}
+.nowplaying {
+    font-weight: 100 !important;
+    text-align: center;
+}
+#nowplaying-song {
+
+}
+#nowplaying-artist {
+    font-style: italic;
 }
