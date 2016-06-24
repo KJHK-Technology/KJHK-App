@@ -2,7 +2,6 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
-
 .run(function($ionicPlatform) {
 	$ionicPlatform.ready(function() {
 		if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -21,6 +20,21 @@ angular.module('starter', ['ionic'])
 	});
 })
 
+angular.module('starter')
+.controller('PlaylistsController', function($scope, $http) {
+  $scope.playlistRefresh = function() {
+	  console.log('This is working');
+	  loadPlaylists();
+	  $scope.$broadcast('scroll.refreshComplete');
+  };
+  $scope.swipeRight = function() {
+	  changeDay(-1)
+  };
+  $scope.swipeLeft = function() {
+	  changeDay(1);
+  };
+});
+
 /****** STREAM ******/
 
 var streamPlayer = null; //The Element object of the <audio> element, set to null when the stream is paused
@@ -28,8 +42,6 @@ var streamPlayer = null; //The Element object of the <audio> element, set to nul
 var playing = false;
 
 var timeout;
-
-//
 
 //Play and Pause
 function play() {
@@ -108,6 +120,8 @@ function updateCurrentSong() {
 
 /******PLAYLISTS******/
 
+var monthStrings = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 var logDay = 0;
 
 function getCleanDate(rawDate) {
@@ -143,7 +157,7 @@ function getMusicLogs(day) {
 	$.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function(data) {
 		var logs = '';
 		var iter = false;
-		$.each(data, function(key, entry) {
+		$.each(data.logs, function(key, entry) {
 			var bgClass = iter ? 'bg-1' : 'bg-2';
 			iter = !iter;
 			var items = [];
@@ -157,9 +171,11 @@ function getMusicLogs(day) {
 			items.push('</div>');
 			logs += items.join('');
 		});
+		var logDate = getCleanDate(data.date);
 		document.getElementById('music-logs-loading').classList.add('ng-hide');
 		document.getElementById('music-logs-spinner').classList.add('ng-hide');
 		document.getElementById('music-logs').innerHTML = logs;
+		document.getElementById('music-log-date').innerHTML = 'Music Logs for ' + monthStrings[logDate.getMonth() - 1] + ' ' + logDate.getDate();
 	});
 }
 

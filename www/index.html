@@ -41,7 +41,7 @@
 						<div id="play-pause-container">
 							<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
 							<image id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"></image>
-							<ion-spinner id="stream-spinner" class="ng-hide"></ion-spinner>
+							<ion-spinner id="stream-spinner" class="spinner-lg ng-hide"></ion-spinner>
 						</div>
 					</div>
 					<div id="current-song">
@@ -55,20 +55,22 @@
 				</div>
 			</ion-tab>
 
-			<ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-clock" icon-off="ion-ios-clock-outline" on-select="changeDay(0)">
+			<ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-clock" icon-off="ion-ios-clock-outline">
 				<!-- Tab 2 content -->
-				<div id="music-logs-container" class="content-container" ng-load="loadPlaylists()">
+				<div id="music-logs-container" class="content-container" ng-controller="PlaylistsController" ng-init="playlistRefresh()">
 					<div id="music-logs-head">
 						<div>
-							<h3>Music Logs for <div id="music-log-date"></div></h3>
+							<h3 id="music-log-date">Music Logs for...</h3>
 						</div>
 						<div id="music-logs-buttons">
 							<button onclick="changeDay(-1)" class="button music-logs-button" id="music-logs-prev">&lt</button>
 							<button onclick="changeDay(1)" class="button music-logs-button" id="music-logs-next">&gt</button>
 						</div>
 					</div>
-					<ion-scroll id="music-logs-scroll" zooming="true" direction="y" on-swipe-right="changeDay(-1)" on-drag-right="changeDay(-1)" on-swipe-left="changeDay(1)" on-drag-left="changeDay(1)">
-						<ion-spinner id="music-logs-spinner"></ion-spinner>
+					<ion-scroll id="music-logs-scroll" ng-controller="PlaylistsController" zooming="false" direction="y" on-swipe-right="swipeRight()" on-swipe-left="swipeLeft()">
+						<ion-refresher pulling-text="Pull to refresh..." on-refresh="playlistRefresh()">
+						</ion-refresher>
+						<ion-spinner id="music-logs-spinner" class="spinner-lg"></ion-spinner>
 						<div id="music-logs-loading" class="ng-hide">
 						</div>
 						<div id="music-logs-wrapper">
