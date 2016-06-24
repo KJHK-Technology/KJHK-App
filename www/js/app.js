@@ -1,51 +1,55 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
+// 'KJHKApp' is the name of this angular module (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
-.run(function($ionicPlatform) {
-	$ionicPlatform.ready(function() {
-		if (window.cordova && window.cordova.plugins.Keyboard) {
-			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-			// for form inputs)
-			cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+angular.module('KJHKApp', ['ionic'])
+	.run(function($ionicPlatform) {
+		$ionicPlatform.ready(function() {
+			if (window.cordova && window.cordova.plugins.Keyboard) {
+				// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+				// for form inputs)
+				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-			// Don't remove this line unless you know what you are doing. It stops the viewport
-			// from snapping when text inputs are focused. Ionic handles this internally for
-			// a much nicer keyboard experience.
-			cordova.plugins.Keyboard.disableScroll(true);
-		}
-		if (window.StatusBar) {
-			StatusBar.styleDefault();
-		}
+				// Don't remove this line unless you know what you are doing. It stops the viewport
+				// from snapping when text inputs are focused. Ionic handles this internally for
+				// a much nicer keyboard experience.
+				cordova.plugins.Keyboard.disableScroll(true);
+			}
+			if (window.StatusBar) {
+				StatusBar.styleDefault();
+			}
+		});
+	})
+
+//This handles all the playlist angular UI functions
+angular.module('KJHKApp')
+	.controller('PlaylistsController', function($scope, $http) {
+		$scope.playlistRefresh = function() {
+			console.log('This is working');
+			getMusicLogs(logDay);
+			$scope.$broadcast('scroll.refreshComplete');
+		};
+		$scope.swipeRight = function() {
+			changeDay(-1)
+		};
+		$scope.swipeLeft = function() {
+			changeDay(1);
+		};
 	});
-})
-
-angular.module('starter')
-.controller('PlaylistsController', function($scope, $http) {
-  $scope.playlistRefresh = function() {
-	  console.log('This is working');
-	  loadPlaylists();
-	  $scope.$broadcast('scroll.refreshComplete');
-  };
-  $scope.swipeRight = function() {
-	  changeDay(-1)
-  };
-  $scope.swipeLeft = function() {
-	  changeDay(1);
-  };
-});
 
 /****** STREAM ******/
 
 var streamPlayer = null; //The Element object of the <audio> element, set to null when the stream is paused
 
+//Used to keep track of whether the stream is playing or not
 var playing = false;
 
+//Used to force a play attempt after 15 seconds if loading is going slowly
 var timeout;
 
 //Play and Pause
 function play() {
-	if (!playing) { //Start the music by creating a new <audio> element
+	if (!playing) {
+		//Start the music by creating a new <audio> element
 		document.getElementById('play-button').classList.add('ng-hide');
 
 		streamPlayer = document.createElement('audio');
@@ -56,35 +60,42 @@ function play() {
 
 		document.getElementById('audioplayer').appendChild(streamPlayer);
 
+		// If loading takes longer than 20 seconds, this event listener will cause
+		// the stream to play as soon as possible, even if the buffer is not large enough
+		// to play without gaps
 		timeout = setTimeout(function() {
 			streamPlayer.addEventListener('canplay',
 				function() {
 					document.getElementById('stream-spinner').classList.add('ng-hide');
-                    document.getElementById('pause-button').classList.remove('ng-hide');
+					document.getElementById('pause-button').classList.remove('ng-hide');
 					streamPlayer.play();
 				}, 20000);
 		});
 
-		// Hides spinner, starts playback
+		// Hides spinner and starts playback if the stream can start playing without
+		// gaps in playback
 		streamPlayer.addEventListener('canplaythrough',
 			function() {
 				if (streamPlayer.played.length == 0) {
 					clearTimeout(timeout);
 					document.getElementById('stream-spinner').classList.add('ng-hide');
-                    document.getElementById('pause-button').classList.remove('ng-hide');
+					document.getElementById('pause-button').classList.remove('ng-hide');
 					streamPlayer.play();
 				}
 			}, false);
 
+		// If playback stops due to slow connection, display the loading indicator
 		streamPlayer.addEventListener("waiting",
 			function() {
+				document.getElementById('pause-button').classList.add('ng-hide');
 				document.getElementById('stream-spinner').classList.remove('ng-hide');
 			}, false);
 
+		// Make sure that the pause button appears and loading indicator is hidden on playback
 		streamPlayer.addEventListener("playing",
 			function() {
 				document.getElementById('stream-spinner').classList.add('ng-hide');
-                document.getElementById('pause-button').classList.remove('ng-hide');
+				document.getElementById('pause-button').classList.remove('ng-hide');
 			}, false);
 
 		console.log('Changing button image to pause');
@@ -92,7 +103,8 @@ function play() {
 		document.getElementById('play-button').classList.add('ng-hide');
 		document.getElementById('stream-spinner').classList.remove('ng-hide');
 		playing = true;
-	} else { //Destroy the <audio> element so that it doesn't keep using data while paused
+	} else {
+		//Destroy the <audio> element so that it doesn't keep using data while paused
 		streamPlayer.pause();
 		var source = streamPlayer.firstElementChild;
 		source.setAttribute('src', '');
@@ -111,6 +123,9 @@ function play() {
 	}
 }
 
+/**
+ * Updates the current song playing (displayed underneath play/pause button)
+ */
 function updateCurrentSong() {
 	$.getJSON("http://kjhk.org/web/app_resources/nowPlaying.php", function(data) {
 		document.getElementById('nowplaying-song').innerHTML = data.song;
@@ -120,10 +135,17 @@ function updateCurrentSong() {
 
 /******PLAYLISTS******/
 
+//Used for displaying the month as a string in the "Music Logs for ..." area
 var monthStrings = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+//How many days ago logs are being generated for
 var logDay = 0;
 
+/**
+ * Extracts a javascript date object from a string formatted as YYYY?MM?DD?HH?mm?ss
+ * @param rawDate {string}
+ * @return cleanDate {Date}
+ */
 function getCleanDate(rawDate) {
 	var cleanDate = new Date(rawDate.substring(0, 4),
 		rawDate.substring(5, 7),
@@ -134,6 +156,12 @@ function getCleanDate(rawDate) {
 	return cleanDate;
 }
 
+/**
+ * Transforms two 24 hour format, integer hour/minute params into a 12 hour format string
+ * @param hours {number} hours from 0-23
+ * @param minutes {number} miniutes from 0-59
+ * @return {string}
+ */
 function getTwelveHourTime(hours, minutes) {
 	if (minutes < 10) {
 		minutes = '0' + minutes;
@@ -149,6 +177,10 @@ function getTwelveHourTime(hours, minutes) {
 	}
 }
 
+/**
+ * Updates the music logs with those of a given number of days ago, handling all appearance and formatting
+ * @param day {number} The number of days ago logs are to be retrieved from (from 0-13)
+ */
 function getMusicLogs(day) {
 	document.getElementById('music-logs-loading').classList.remove('ng-hide');
 	document.getElementById('music-logs-spinner').classList.remove('ng-hide');
@@ -179,6 +211,10 @@ function getMusicLogs(day) {
 	});
 }
 
+/**
+ * Changes the day of songs loaded by a given number of days (limited to between 0-13 inclusive)
+ * @param num {number} a positive or negative integer to iterate days by
+ */
 function changeDay(num) {
 	var oldDay = logDay;
 	if (logDay + num > 13) {
@@ -188,11 +224,6 @@ function changeDay(num) {
 	} else {
 		logDay += num;
 	}
-	getMusicLogs(logDay);
-}
-
-function loadPlaylists() {
-	console.log('loadPlaylists fired');
 	getMusicLogs(logDay);
 }
 
