@@ -38,6 +38,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 #music-log-date {
     margin-top: 10px;
+    text-align: center;
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: 400 !important;
+    font-size: 1.6em;
 }
 #music-logs-scroll {
   flex: 0 1 auto;
@@ -147,6 +152,7 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 10;
 }
 #current-song {
+  padding: 0 10px 0 10px;
   position: absolute;
   bottom: 45px;
   width: 100%;
