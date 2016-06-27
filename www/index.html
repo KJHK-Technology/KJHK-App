@@ -39,25 +39,25 @@
 
 					<div id="audioUI">
 						<div id="play-pause-container">
+							<div id="play-pause-mask" class="ng-hide">
+								<ion-spinner id="stream-spinner" class="spinner-lg ng-hide"></ion-spinner>
+							</div>
 							<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
 							<image id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"></image>
-							<ion-spinner id="stream-spinner" class="spinner-lg ng-hide"></ion-spinner>
 						</div>
 					</div>
 					<div id="current-song">
 						<h2 id="nowplaying-song" class="nowplaying"></h2>
 						<h3 id="nowplaying-artist" class="nowplaying"></h3>
 					</div>
-
 					<div id="audioplayer">
 					</div>
-
 				</div>
 			</ion-tab>
 
 			<ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-clock" icon-off="ion-ios-clock-outline">
 				<!-- Tab 2 content -->
-				<div id="music-logs-container" class="content-container" ng-controller="PlaylistsController" ng-init="playlistRefresh()">
+				<div id="music-logs-container" class="content-container" ng-controller="PlaylistsController" ng-init="playlistsInit()">
 					<div id="music-logs-head">
 						<div>
 							<h3 id="music-log-date">Music Logs for...</h3>
@@ -70,11 +70,10 @@
 					<ion-scroll id="music-logs-scroll" ng-controller="PlaylistsController" zooming="false" direction="y" on-swipe-right="swipeRight()" on-swipe-left="swipeLeft()">
 						<ion-refresher pulling-text="Pull to refresh..." on-refresh="playlistRefresh()">
 						</ion-refresher>
-						<ion-spinner id="music-logs-spinner" class="spinner-lg"></ion-spinner>
-						<div id="music-logs-loading" class="ng-hide">
-						</div>
 						<div id="music-logs-wrapper">
-							<div id="music-logs"></div>
+							<div id="music-logs">
+								<ion-spinner id="logs-spinner" class="spinner-lg"></ion-spinner>
+							</div>
 						</div>
 					</ion-scroll>
 				</div>

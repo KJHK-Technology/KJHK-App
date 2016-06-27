@@ -16,8 +16,8 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.19);
 }
 .spinner-lg svg {
-  width: 100px !important;
-  height: 100px !important;
+  width: 150px !important;
+  height: 150px !important;
 }
 
 /******Playlists Stuff******/
@@ -37,42 +37,34 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -5;
 }
 #music-log-date {
-    margin-top: 10px;
-    text-align: center;
-    width: 100%;
-    text-transform: uppercase;
-    font-weight: 400 !important;
-    font-size: 1.6em;
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+  text-transform: uppercase;
+  font-weight: 400 !important;
+  font-size: 1.6em;
 }
 #music-logs-scroll {
   flex: 0 1 auto;
   order: 2;
   width: 100%;
+  height: 100%;
   z-index: -10;
 }
-#music-logs {}
 #music-logs-wrapper {
-  position: relative;
-}
-#music-logs-loading {
-  position: absolute;
-  top: 0;
-  width: 100%;
+  display: flex;
   height: 100%;
-  background-color: #222;
-  opacity: 0.3;
-  z-index: 10;
 }
-#music-logs-spinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
-  height: 100px;
-  width: 100px;
-  opacity: 1 !important;
-  z-index: 1000;
+#logs-spinner {
+    position: absolute;
+    top: calc(50% - 75px);
+    left: calc(50% - 75px);
+    z-index: 15;
+    opacity: 1;
+}
+#music-logs {
+  position: relative;
+  flex: 1 1 auto;
 }
 #music-logs-prev {
   position: absolute;
@@ -81,6 +73,23 @@ h1, h2, h3, h4, h5, h6 {
 #music-logs-next {
   position: absolute;
   right: 10%;
+}
+.slide {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  transition: transform .2s ease-in;
+}
+.slide.active {
+  height: 100%;
+  transform: translate3d(0px, 0px, 0px);
+  transition-timing-function: ease-out;
+}
+.slide.before {
+  transform: translate3d(-130vw, 0px, 0px);
+}
+.slide.after {
+  transform: translate3d(130vw, 0px, 0px);
 }
 .music-entry {
   display: -webkit-flex;
@@ -129,6 +138,14 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   width: 100%;
 }
+#play-pause-mask {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background-color: #373D44;
+  opacity: 0.5;
+}
 #play-button {
   display: block;
   margin: -50px auto auto;
@@ -146,10 +163,15 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.19);
   border-radius: 50%;
 }
+#pause-button.loading {
+  fill: #9A9EA0;
+}
 #stream-spinner {
   position: absolute;
-  left: 50% margin-left: -100px;
-  z-index: 10;
+  top: calc(50% - 75px);
+  left: calc(50% - 75px);
+  z-index: 15;
+  opacity: 1;
 }
 #current-song {
   padding: 0 10px 0 10px;
