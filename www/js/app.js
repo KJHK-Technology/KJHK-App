@@ -18,24 +18,37 @@ angular.module('KJHKApp', ['ionic'])
 				StatusBar.styleDefault();
 			}
 		});
-	})
+	});
 
 //This handles all the playlist angular UI functions
 angular.module('KJHKApp')
-	.controller('PlaylistsController', function($scope, $http) {
+	.controller('PlaylistsController', function($scope, $http, $ionicScrollDelegate) {
 		$scope.playlistsInit = function() {
+			console.log('Initializing Playlists...');
 			playlistsLoad();
 		};
 		$scope.playlistRefresh = function() {
-			console.log('This is working');
+			console.log('Refreshing playlist');
 			changeDay(logDay);
 			$scope.$broadcast('scroll.refreshComplete');
 		};
 		$scope.swipeRight = function() {
-			changeDay(-1)
+			changeDay(-1);
+			$scope.scrollToTop();
 		};
 		$scope.swipeLeft = function() {
 			changeDay(1);
+			$scope.scrollToTop();
+		};
+		$scope.scrollToTop = function() {
+			$ionicScrollDelegate.$getByHandle('logs').scrollTop();
+		};
+	});
+angular.module('KJHKApp')
+	.controller('StreamController', function($scope, $http) {
+		$scope.streamInit = function() {
+			console.log('Initializing Stream...');
+			animateStreamSpinner();
 		};
 	});
 
@@ -49,8 +62,29 @@ var playing = false;
 //Used to force a play attempt after 15 seconds if loading is going slowly
 var timeout;
 
+var streamSpinnerDeg = 0;
+
+function animateStreamSpinner() {
+	console.log('Animating stream spinner...');
+	$spinner = $('#stream-spinner');
+	$({deg: 0}).animate({deg: 360}, {
+        duration: 1500,
+        step: function(now) {
+            $spinner.css({
+                transform: 'rotate(' + now + 'deg)',
+				'-webkit-transform': 'rotate('+ now + 'deg)'
+            });
+        },
+		easing: 'linear',
+		complete: function() {
+			animateStreamSpinner();
+		}
+    });
+}
+
 //Play and Pause
 function play() {
+	var source;
 	if (!playing) {
 		//Start the music by creating a new <audio> element
 		$('#play-button').addClass('ng-hide');
@@ -60,7 +94,7 @@ function play() {
 		$('#stream-spinner').removeClass('ng-hide');
 
 		streamPlayer = document.createElement('audio');
-		var source = document.createElement('source');
+		source = document.createElement('source');
 		source.setAttribute('src', 'http://kjhkstream.org:8000/stream_low');
 		streamPlayer.appendChild(source);
 		streamPlayer.setAttribute('id', 'streamPlayer');
@@ -84,7 +118,7 @@ function play() {
 		// gaps in playback
 		streamPlayer.addEventListener('canplaythrough',
 			function() {
-				if (streamPlayer.played.length == 0) {
+				if (streamPlayer.played.length === 0) {
 					clearTimeout(timeout);
 					$('#stream-spinner').addClass('ng-hide');
 					$('#play-pause-mask').addClass('ng-hide');
@@ -113,7 +147,7 @@ function play() {
 	} else {
 		//Destroy the <audio> element so that it doesn't keep using data while paused
 		streamPlayer.pause();
-		var source = streamPlayer.firstElementChild;
+		source = streamPlayer.firstElementChild;
 		source.setAttribute('src', '');
 		streamPlayer.load();
 		document.getElementById('audioplayer').removeChild(streamPlayer);
@@ -162,11 +196,6 @@ var playlistSlides = [document.createElement('div'), document.createElement('div
 var logDay = 0;
 
 /**
- * Date the current displayed logs are for
- */
-var logDate = new Date();
-
-/**
  * Extracts a javascript date object from a string formatted as YYYY?MM?DD?HH?mm?ss
  * @param rawDate {string}
  * @return cleanDate {Date}
@@ -191,7 +220,7 @@ function getTwelveHourTime(hours, minutes) {
 	if (minutes < 10) {
 		minutes = '0' + minutes;
 	}
-	if (hours == 0) {
+	if (hours === 0) {
 		return '12:' + minutes + 'am';
 	} else if (hours < 12) {
 		return hours + ':' + minutes + ' am';
@@ -207,7 +236,6 @@ function getTwelveHourTime(hours, minutes) {
  * @param day {number} The number of days ago logs are to be retrieved from (from 0-13)
  */
 function getMusicLogs(day) {
-	var logDate;
 	$.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function(data) {
 		var logs = '';
 		var iter = false;
@@ -256,24 +284,26 @@ function changeDay(num) {
 		logDay = 0;
 	} else {
 		logDay += num;
-		logDate.setDate(logDate.getDate() - num);
 	}
-	if (num <= 0) getMusicLogs(logDay);
-	if (logDay < 13 && playlistSlides[logDay + 1].innerHTML == '') getMusicLogs(logDay + 1);
+	if (logDay === 0) getMusicLogs(logDay);
+	if (logDay < 13 && playlistSlides[logDay + 1].innerHTML === '') getMusicLogs(logDay + 1);
 	transitionSlide(playlistSlides[logDay]);
 	updateDate();
 }
 
 function updateDate() {
-	document.getElementById('music-log-date').innerHTML = 'Music Logs for ' + monthStrings[logDate.getMonth()] + ' ' + logDate.getDate();
+	var date = new Date();
+	date.setDate(date.getDate() - logDay);
+	document.getElementById('music-log-date').innerHTML = 'Music Logs for ' + monthStrings[date.getMonth()] + ' ' + date.getDate();
 }
 
 function playlistsLoad() {
-	console.log('playlists initializing...');
 	//prepare playlistSlides elements
 	$(playlistSlides[0]).addClass('slide active');
 	for (var i = 0; i < playlistSlides.length; ++i) {
-		if (i > 0) $(playlistSlides[i]).addClass('slide after');
+		if (i > 0) {
+			$(playlistSlides[i]).addClass('slide after');
+		}
 		$(playlistSlides[i]).data('day', i);
 		$('#music-logs').append(playlistSlides[i]);
 	}
@@ -284,5 +314,5 @@ function playlistsLoad() {
 updateCurrentSong();
 
 window.setInterval(function() {
-	updateCurrentSong()
+	updateCurrentSong();
 }, 15000);

@@ -35,15 +35,14 @@
 
 			<ion-tab class="balanced" title="STREAM" icon-on="ion-ios-filing" icon-off="ion-ios-filing-outline">
 				<!-- Tab 1 content -->
-				<div class="content-container">
-
+				<div class="content-container" ng-controller="StreamController" ng-init="streamInit()">
 					<div id="audioUI">
 						<div id="play-pause-container">
-							<div id="play-pause-mask" class="ng-hide">
-								<ion-spinner id="stream-spinner" class="spinner-lg ng-hide"></ion-spinner>
+							<div id="play-pause-mask" class="ng-hide" onclick="play()">
+								<img src="img/spinner.svg" width="250px" height="250px" id="stream-spinner">
 							</div>
-							<image src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></image>
-							<image id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"></image>
+							<img src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></img>
+							<img id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"></img>
 						</div>
 					</div>
 					<div id="current-song">
@@ -63,11 +62,11 @@
 							<h3 id="music-log-date">Music Logs for...</h3>
 						</div>
 						<div id="music-logs-buttons">
-							<button onclick="changeDay(-1)" class="button music-logs-button" id="music-logs-prev">&lt</button>
-							<button onclick="changeDay(1)" class="button music-logs-button" id="music-logs-next">&gt</button>
+							<div ng-click="swipeRight()" class="music-logs-button" id="music-logs-prev">&lt</div>
+							<div ng-click="swipeLeft()" class="music-logs-button" id="music-logs-next">&gt</div>
 						</div>
 					</div>
-					<ion-scroll id="music-logs-scroll" ng-controller="PlaylistsController" zooming="false" direction="y" on-swipe-right="swipeRight()" on-swipe-left="swipeLeft()">
+					<ion-scroll id="music-logs-scroll" ng-controller="PlaylistsController" delegate-handle="logs" zooming="false" has-bouncing="true" direction="y" on-swipe-right="swipeRight()" on-swipe-left="swipeLeft()">
 						<ion-refresher pulling-text="Pull to refresh..." on-refresh="playlistRefresh()">
 						</ion-refresher>
 						<div id="music-logs-wrapper">
@@ -89,9 +88,4 @@
 		</ion-tabs>
 	</ion-pane>
 </body>
-<!--
-	<script src="js/stream.js"></script>
-	<script src="js/playlists.js"></script>
-	-->
-
 </html>
