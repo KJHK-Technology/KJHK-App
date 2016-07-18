@@ -373,7 +373,7 @@ function app_log(msg) {
 
 function app_buffered() {
 	if(streamPlayer && streamPlayer.readyState > 0) {
-		document.getElementById('app_data').innerHTML = '<p>BUFFERED: ' + streamPlayer.buffered.end(0) + '</p><p>PLAYBACK: ' + (streamPlayer.currentTime * 1000) + '</p><p>LOADED AHEAD: ' + (streamPlayer.buffered.end(0) - (streamPlayer.currentTime * 1000)) + '</p>';
+		document.getElementById('app_data').innerHTML = '<p>BUFFERED: ' + streamPlayer.buffered.end(0) + '</p><p>PLAYBACK: ' + (streamPlayer.currentTime) + '</p><p>LOADED AHEAD: ' + (streamPlayer.buffered.end(0) - (streamPlayer.currentTime)) + '</p>';
 	} else {
 		document.getElementById('app_data').innerHTML = '<p>BUFFERED: n/a</p><p>PLAYBACK: n/a</p><p>LOADED AHEAD: n/a</p>';
 	}
