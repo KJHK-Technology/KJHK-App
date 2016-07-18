@@ -25,6 +25,7 @@ angular.module('KJHKApp')
 	.controller('PlaylistsController', function($scope, $http, $ionicScrollDelegate) {
 		$scope.playlistsInit = function() {
 			console.log('Initializing Playlists...');
+			playlistSlides[0].innerHTML = preloadSlide;
 			playlistsLoad();
 		};
 		$scope.playlistRefresh = function() {
@@ -92,20 +93,39 @@ function animateStreamSpinner() {
 	});
 }
 
-function visPlaying() {
+function visPlay() {
+	app_log('visPlay');
 	$('#stream-spinner').addClass('ng-hide');
 	$('#play-pause-mask').addClass('ng-hide');
 	$('#pause-button').removeClass('loading');
 }
 
-function visLoading() {
+function visLoad() {
+	app_log('visLoad');
 	$('#stream-spinner').removeClass('ng-hide');
 	$('#play-pause-mask').removeClass('ng-hide');
 	$('#pause-button').addClass('loading');
 }
 
-function visPaused() {
+function visPause() {
+	app_log('visPause');
+	$('#stream-spinner').addClass('ng-hide');
+	$('#play-pause-mask').addClass('ng-hide');
+	$('#pause-button').addClass('ng-hide');
+	$('#play-button').removeClass('ng-hide');
+}
 
+/**
+ * Checks if the stream is playing and updates the classes of the UI if it is.  If not, this will recurse through a 1s timeout
+ * This is necessary because some browsers will not fire the 'playing' event after playback stalls
+ *
+ */
+function checkPause() {
+	if(!streamPlayer.paused) {
+		visPlay();
+	} else {
+		setTimeout(checkPause, 1000);
+	}
 }
 
 //Play and Pause
@@ -136,7 +156,7 @@ function play() {
 			streamPlayer.addEventListener('canplay',
 				function() {
 					app_log('canplay');
-					visPlaying();
+					visPlay();
 					streamPlayer.play();
 				});
 		}, 10000);
@@ -149,7 +169,7 @@ function play() {
 				app_log('<span style="padding-left: 15px;"> played: ' + streamPlayer.played.length + '</span>');
 				if (streamPlayer.played.length === 0) {
 					clearTimeout(timeout);
-					visPlaying();
+					visPlay();
 					streamPlayer.play();
 				}
 			}, false);
@@ -158,27 +178,29 @@ function play() {
 		streamPlayer.addEventListener("waiting",
 			function() {
 				app_log('waiting');
-				visPaused();
+				visLoad();
+				checkPause();
 			}, false);
 
 		// If playback stops due to slow connection, display the loading indicator
 		streamPlayer.addEventListener("stalled",
 			function() {
 				app_log('stalled');
-				visPaused();
+				visLoad();
+				checkPause();
 			}, false);
 
 		// Make sure that the pause button appears and loading indicator is hidden on playback
 		streamPlayer.addEventListener("playing",
 			function() {
 				app_log('playing');
-				visPlaying();
+				visPlay();
 			}, false);
 		// Make sure that the pause button appears and loading indicator is hidden on playback
 		streamPlayer.addEventListener("play",
 			function() {
 				app_log('play');
-				visPlaying();
+				visPlay();
 			}, false);
 
 		playing = true;
@@ -192,15 +214,7 @@ function play() {
 		document.getElementById('audioplayer').removeChild(streamPlayer);
 		streamPlayer = null; //This deletes all associated event listeners as well
 		clearTimeout(timeout);
-
-		//Do this to make sure the spinner doesn't get left on screen if the play button is pressed before loading is finished
-		$('#stream-spinner').addClass('ng-hide');
-		$('#play-pause-mask').addClass('ng-hide');
-
-		console.log('Changing button image to play');
-		// Switch play button appearance to play
-		document.getElementById('pause-button').classList.add('ng-hide');
-		document.getElementById('play-button').classList.remove('ng-hide');
+		visPause();
 		playing = false;
 	}
 }
@@ -228,6 +242,12 @@ var monthStrings = ["January", "February", "March", "April", "May", "June", "Jul
  * @type {Object[]}
  */
 var playlistSlides = [document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div'), document.createElement('div')];
+
+/**
+ * Holds the first day of music logs as a string so that they do not need to be loaded
+ * @type {string}
+ */
+var preloadSlide = '';
 
 /**
  * Number of days ago that logs are being viewed for
@@ -297,6 +317,28 @@ function getMusicLogs(day) {
 	});
 }
 
+function preloadMusicLogs() {
+	$.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=0", function(data) {
+		var logs = '';
+		var iter = false;
+		$.each(data.logs, function(key, entry) {
+			var bgClass = iter ? 'bg-1' : 'bg-2';
+			iter = !iter;
+			var items = [];
+			items.push('<div class="music-entry ' + bgClass + '">');
+			var myDate = getCleanDate(entry.Entry_Date);
+			var dateStr = getTwelveHourTime(myDate.getHours(), myDate.getMinutes());
+
+			items.push('<h5 class="music-entry-time">' + dateStr + '</h5>');
+			items.push('<p class="music-entry-details">' + entry.Song + '<br> by ' + entry.Artist + '<br><i>from ' + entry.Album + '</i></p>');
+
+			items.push('</div>');
+			logs += items.join('');
+		});
+		preloadSlide = logs;
+	});
+}
+
 /**
  * Handles the visual sliding transition between playlist slides
  * @param element {object} The slide element to transition in
@@ -353,6 +395,8 @@ function playlistsLoad() {
 
 updateCurrentSong();
 
+preloadMusicLogs();
+
 window.setInterval(function() {
 	updateCurrentSong();
 }, 15000);
@@ -372,7 +416,7 @@ function app_log(msg) {
 }
 
 function app_buffered() {
-	if(streamPlayer && streamPlayer.readyState > 0) {
+	if (streamPlayer && streamPlayer.readyState > 0) {
 		document.getElementById('app_data').innerHTML = '<p>BUFFERED: ' + streamPlayer.buffered.end(0) + '</p><p>PLAYBACK: ' + (streamPlayer.currentTime) + '</p><p>LOADED AHEAD: ' + (streamPlayer.buffered.end(0) - (streamPlayer.currentTime)) + '</p>';
 	} else {
 		document.getElementById('app_data').innerHTML = '<p>BUFFERED: n/a</p><p>PLAYBACK: n/a</p><p>LOADED AHEAD: n/a</p>';
