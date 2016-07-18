@@ -51,6 +51,12 @@ angular.module('KJHKApp')
 			animateStreamSpinner();
 		};
 	});
+angular.module('KJHKApp')
+	.controller('ContactController', function($scope, $http) {
+		$scope.contactInit = function() {
+			document.getElementById('app_logs').innerHTML += backlog;
+		};
+	});
 
 /****** STREAM ******/
 
@@ -67,25 +73,30 @@ var streamSpinnerDeg = 0;
 function animateStreamSpinner() {
 	console.log('Animating stream spinner...');
 	$spinner = $('#stream-spinner');
-	$({deg: 0}).animate({deg: 360}, {
-        duration: 1500,
-        step: function(now) {
-            $spinner.css({
-                transform: 'rotate(' + now + 'deg)',
-				'-webkit-transform': 'rotate('+ now + 'deg)'
-            });
-        },
+	$({
+		deg: 0
+	}).animate({
+		deg: 360
+	}, {
+		duration: 1500,
+		step: function(now) {
+			$spinner.css({
+				transform: 'rotate(' + now + 'deg)',
+				'-webkit-transform': 'rotate(' + now + 'deg)'
+			});
+		},
 		easing: 'linear',
 		complete: function() {
 			animateStreamSpinner();
 		}
-    });
+	});
 }
 
 //Play and Pause
 function play() {
 	var source;
 	if (!playing) {
+		app_log('preparing for playback');
 		//Start the music by creating a new <audio> element
 		$('#play-button').addClass('ng-hide');
 		$('#pause-button').addClass('loading');
@@ -107,6 +118,7 @@ function play() {
 		timeout = setTimeout(function() {
 			streamPlayer.addEventListener('canplay',
 				function() {
+					app_log('canplay');
 					$('#stream-spinner').addClass('ng-hide');
 					$('#play-pause-mask').addClass('ng-hide');
 					$('#pause-button').removeClass('loading');
@@ -118,7 +130,10 @@ function play() {
 		// gaps in playback
 		streamPlayer.addEventListener('canplaythrough',
 			function() {
+				app_log('canplaythrough');
+				app_log('    played: ' + streamPlayer.played.length);
 				if (streamPlayer.played.length === 0) {
+					app_log('canplaythrough');
 					clearTimeout(timeout);
 					$('#stream-spinner').addClass('ng-hide');
 					$('#play-pause-mask').addClass('ng-hide');
@@ -130,6 +145,7 @@ function play() {
 		// If playback stops due to slow connection, display the loading indicator
 		streamPlayer.addEventListener("waiting",
 			function() {
+				app_log('waiting');
 				$('#stream-spinner').removeClass('ng-hide');
 				$('#play-pause-mask').removeClass('ng-hide');
 				$('#pause-button').addClass('loading');
@@ -138,6 +154,7 @@ function play() {
 		// Make sure that the pause button appears and loading indicator is hidden on playback
 		streamPlayer.addEventListener("playing",
 			function() {
+				app_log('playing');
 				$('#stream-spinner').addClass('ng-hide');
 				$('#play-pause-mask').addClass('ng-hide');
 				$('#pause-button').removeClass('loading');
@@ -145,6 +162,7 @@ function play() {
 
 		playing = true;
 	} else {
+		app_log('stopping playback');
 		//Destroy the <audio> element so that it doesn't keep using data while paused
 		streamPlayer.pause();
 		source = streamPlayer.firstElementChild;
@@ -316,3 +334,15 @@ updateCurrentSong();
 window.setInterval(function() {
 	updateCurrentSong();
 }, 15000);
+
+/******CONTACT******/
+
+var backlog = '';
+
+function app_log(msg) {
+	if (document.getElementById('app_logs')) {
+		document.getElementById('app_logs').innerHTML += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now() + '</span></p>';
+	} else {
+		backlog += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now() + '</span></p>';
+	}
+}

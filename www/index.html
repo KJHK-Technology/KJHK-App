@@ -4,7 +4,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-	<title></title>
+
+	<title>KJHK App</title>
 
 	<link rel="stylesheet" href="css/style.css">
 	<!-- compiled css output -->
@@ -26,7 +27,6 @@
 </head>
 
 <body ng-app="KJHKApp">
-
 	<ion-pane>
 		<ion-header-bar class="bar-dark" id="header-bar">
 			<h1 class="title">KJHK</h1>
@@ -41,8 +41,8 @@
 							<div id="play-pause-mask" class="ng-hide" onclick="play()">
 								<img src="img/spinner.svg" width="250px" height="250px" id="stream-spinner">
 							</div>
-							<img src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"></img>
-							<img id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"></img>
+							<img src="img/play.svg" width="200px" height="200px" id="play-button" class="" onclick="play()"/>
+							<img id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="play()"/>
 						</div>
 					</div>
 					<div id="current-song">
@@ -79,12 +79,12 @@
 			</ion-tab>
 
 			<ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
+				<div id="contact-container" class="content-container" ng-controller="ContactController" ng-init="contactInit()">
 				<!-- Tab 3 content -->
-
-				<h2>Contact test</h2>
-				<h3>Request Line: <a href="tel:785-864-4747">785-864-4747</a></h3>
+					<div id="app_logs" style="width: 100%; height: 100%; font-family: monospace !important; color: #FFF;">
+					</div>
+				</div>
 			</ion-tab>
-
 		</ion-tabs>
 	</ion-pane>
 </body>

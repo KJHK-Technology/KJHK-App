@@ -15,10 +15,6 @@ h1, h2, h3, h4, h5, h6 {
 .tabs.tab-nav {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.19);
 }
-.spinner-lg svg {
-  width: 150px !important;
-  height: 150px !important;
-}
 
 /******Playlists Stuff******/
 
@@ -218,7 +214,6 @@ div.scroll {
   font-weight: 100 !important;
   text-align: center;
 }
-#nowplaying-song {}
 #nowplaying-artist {
   font-style: italic;
 }
