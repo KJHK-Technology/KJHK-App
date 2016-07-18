@@ -56,6 +56,7 @@ angular.module('KJHKApp')
 		$scope.contactInit = function() {
 			document.getElementById('app_logs').innerHTML += backlog;
 		};
+		setInterval(app_buffered, 500);
 	});
 
 /****** STREAM ******/
@@ -71,7 +72,6 @@ var timeout;
 var streamSpinnerDeg = 0;
 
 function animateStreamSpinner() {
-	console.log('Animating stream spinner...');
 	$spinner = $('#stream-spinner');
 	$({
 		deg: 0
@@ -90,6 +90,22 @@ function animateStreamSpinner() {
 			animateStreamSpinner();
 		}
 	});
+}
+
+function visPlaying() {
+	$('#stream-spinner').addClass('ng-hide');
+	$('#play-pause-mask').addClass('ng-hide');
+	$('#pause-button').removeClass('loading');
+}
+
+function visLoading() {
+	$('#stream-spinner').removeClass('ng-hide');
+	$('#play-pause-mask').removeClass('ng-hide');
+	$('#pause-button').addClass('loading');
+}
+
+function visPaused() {
+
 }
 
 //Play and Pause
@@ -116,28 +132,24 @@ function play() {
 		// the stream to play as soon as possible, even if the buffer is not large enough
 		// to play without gaps
 		timeout = setTimeout(function() {
+			app_log('canplay event listener set');
 			streamPlayer.addEventListener('canplay',
 				function() {
 					app_log('canplay');
-					$('#stream-spinner').addClass('ng-hide');
-					$('#play-pause-mask').addClass('ng-hide');
-					$('#pause-button').removeClass('loading');
+					visPlaying();
 					streamPlayer.play();
-				}, 20000);
-		});
+				});
+		}, 10000);
 
 		// Hides spinner and starts playback if the stream can start playing without
 		// gaps in playback
 		streamPlayer.addEventListener('canplaythrough',
 			function() {
 				app_log('canplaythrough');
-				app_log('    played: ' + streamPlayer.played.length);
+				app_log('<span style="padding-left: 15px;"> played: ' + streamPlayer.played.length + '</span>');
 				if (streamPlayer.played.length === 0) {
-					app_log('canplaythrough');
 					clearTimeout(timeout);
-					$('#stream-spinner').addClass('ng-hide');
-					$('#play-pause-mask').addClass('ng-hide');
-					$('#pause-button').removeClass('loading');
+					visPlaying();
 					streamPlayer.play();
 				}
 			}, false);
@@ -146,18 +158,27 @@ function play() {
 		streamPlayer.addEventListener("waiting",
 			function() {
 				app_log('waiting');
-				$('#stream-spinner').removeClass('ng-hide');
-				$('#play-pause-mask').removeClass('ng-hide');
-				$('#pause-button').addClass('loading');
+				visPaused();
+			}, false);
+
+		// If playback stops due to slow connection, display the loading indicator
+		streamPlayer.addEventListener("stalled",
+			function() {
+				app_log('stalled');
+				visPaused();
 			}, false);
 
 		// Make sure that the pause button appears and loading indicator is hidden on playback
 		streamPlayer.addEventListener("playing",
 			function() {
 				app_log('playing');
-				$('#stream-spinner').addClass('ng-hide');
-				$('#play-pause-mask').addClass('ng-hide');
-				$('#pause-button').removeClass('loading');
+				visPlaying();
+			}, false);
+		// Make sure that the pause button appears and loading indicator is hidden on playback
+		streamPlayer.addEventListener("play",
+			function() {
+				app_log('play');
+				visPlaying();
 			}, false);
 
 		playing = true;
@@ -170,6 +191,7 @@ function play() {
 		streamPlayer.load();
 		document.getElementById('audioplayer').removeChild(streamPlayer);
 		streamPlayer = null; //This deletes all associated event listeners as well
+		clearTimeout(timeout);
 
 		//Do this to make sure the spinner doesn't get left on screen if the play button is pressed before loading is finished
 		$('#stream-spinner').addClass('ng-hide');
@@ -337,12 +359,22 @@ window.setInterval(function() {
 
 /******CONTACT******/
 
+
+/******TESTING******/
 var backlog = '';
 
 function app_log(msg) {
 	if (document.getElementById('app_logs')) {
-		document.getElementById('app_logs').innerHTML += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now() + '</span></p>';
+		document.getElementById('app_logs').innerHTML += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now().toFixed(2) + '</span></p>';
 	} else {
-		backlog += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now() + '</span></p>';
+		backlog += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now().toFixed(2) + '</span></p>';
+	}
+}
+
+function app_buffered() {
+	if(streamPlayer && streamPlayer.readyState > 0) {
+		document.getElementById('app_data').innerHTML = '<p>BUFFERED: ' + streamPlayer.buffered.end(0) + '</p>';
+	} else {
+		document.getElementById('app_data').innerHTML = '<p>BUFFERED: n/a</p>';
 	}
 }
