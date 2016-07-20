@@ -83,14 +83,14 @@ div.scroll {
 }
 .slide.active {
   height: 100%;
-  transform: translate3d(0px, 0px, 0px);
+  transform: translate3d(0px, 0, 0);
   transition-timing-function: ease-out;
 }
 .slide.before {
-  transform: translate3d(-130vw, 0px, 0px);
+  transform: translate3d(-130vw, 0, 0);
 }
 .slide.after {
-  transform: translate3d(130vw, 0px, 0px);
+  transform: translate3d(130vw, 0, 0);
 }
 .music-entry {
   display: -webkit-flex;
@@ -132,7 +132,7 @@ div.scroll {
 .music-logs-button:active {
   background-color: #C1C6C9;
 }
-.music-logs-button:after {
+.music-logs-button::after {
   content: "";
   position: absolute;
   z-index: -1;
@@ -142,7 +142,7 @@ div.scroll {
   width: 30px;
   border-radius: 100%;
 }
-.music-logs-button:before {
+.music-logs-button::before {
   content: "";
   position: absolute;
   z-index: -1;

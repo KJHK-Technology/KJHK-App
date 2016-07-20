@@ -121,9 +121,12 @@ function visPause() {
  *
  */
 function checkPause() {
-	if(!streamPlayer.paused) {
+	app_log('checkPause');
+	if(streamPlayer.played.length) {
+		app_log('checkPause you played something');
 		visPlay();
 	} else {
+		app_log('checkPause in a second');
 		setTimeout(checkPause, 1000);
 	}
 }
