@@ -16,6 +16,36 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.19);
 }
 
+/******Toast Notifications******/
+.toast {
+    z-index: 1000;
+    margin: 0 10% 0 10%;
+    position: fixed;
+    display: inline-block;
+    bottom: 20px;
+    min-height: 20px;
+    width: 80%;
+    background-color: #DBE0E3;
+    opacity: 1.0;
+    transition: opacity .3s ease-in;
+    -webkit-transition: opacity .3s ease-in;
+    border-radius: 10px;
+    box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+.toast.hidden {
+    opacity: 0.0;
+    transition: opacity 1s ease-in;
+    -webkit-transition: opacity 1s ease-in;
+}
+.toast-message {
+    width: 100%;
+    color: #111;
+    text-align: center;
+    font-family: sans-serif;
+    vertical-align: middle;
+}
+
 /******Playlists Stuff******/
 
 #music-logs-container {
@@ -216,4 +246,41 @@ div.scroll {
 }
 #nowplaying-artist {
   font-style: italic;
+}
+
+/* CONTACT */
+
+.request-line {
+    height: 80px;
+    position: relative;
+    width: calc(80% - 80px);
+    margin: auto;
+    background-color: #DBE0E3;
+    line-height: 40px;
+    font-size: 2em;
+    text-align: center;
+    vertical-align: middle;
+    font-family: sans-serif;
+}
+.request-line::before {
+    content: ' ';
+    position: absolute;
+    left: -40px;
+    top: 0;
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: #DBE0E3;
+    z-index: -1;
+}
+.request-line::after {
+    content: ' ';
+    position: absolute;
+    right: -40px;
+    top: 0;
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    background-color: #DBE0E3;
+    z-index: -1;
 }

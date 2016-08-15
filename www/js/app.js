@@ -55,10 +55,29 @@ angular.module('KJHKApp')
 angular.module('KJHKApp')
 	.controller('ContactController', function($scope, $http) {
 		$scope.contactInit = function() {
-			document.getElementById('app_logs').innerHTML += backlog;
 		};
-		setInterval(app_buffered, 500);
 	});
+
+/****** TOAST ******/
+
+/**
+ * Displays a toast message
+ * @param {string} msg The message
+ * @param {number} [duration=3000] The duration of the toast message in ms
+ */
+function showToast(msg, duration) {
+	duration = duration || 3000;
+	$('.toast-message').html(msg);
+	$('.toast').removeClass('ng-hide hidden');
+	setTimeout(hideToast, duration);
+}
+
+function hideToast() {
+	$('.toast').addClass('hidden');
+	setTimeout(function() {
+		$('.toast').addClass('ng-hide');
+	}, 1200);
+}
 
 /****** STREAM ******/
 
@@ -122,6 +141,7 @@ function visPause() {
  */
 function checkPause() {
 	app_log('checkPause');
+	app_log(streamPlayer.played.length);
 	if(streamPlayer.played.length) {
 		app_log('checkPause you played something');
 		visPlay();
@@ -131,94 +151,108 @@ function checkPause() {
 	}
 }
 
-//Play and Pause
 function play() {
+	app_log('preparing for playback');
+	//Start the music by creating a new <audio> element
+	$('#play-button').addClass('ng-hide');
+	$('#pause-button').addClass('loading');
+	$('#pause-button').removeClass('ng-hide');
+	$('#play-pause-mask').removeClass('ng-hide');
+	$('#stream-spinner').removeClass('ng-hide');
+
+	streamPlayer = document.createElement('audio');
+	source = document.createElement('source');
+	source.setAttribute('src', 'http://kjhkstream.org:8000/stream_low');
+	streamPlayer.appendChild(source);
+	streamPlayer.setAttribute('id', 'streamPlayer');
+
+	document.getElementById('audioplayer').appendChild(streamPlayer);
+
+	// If loading takes longer than 20 seconds, this event listener will cause
+	// the stream to play as soon as possible, even if the buffer is not large enough
+	// to play without gaps
+	timeout = setTimeout(function() {
+		app_log('canplay event listener set');
+		streamPlayer.addEventListener('canplay',
+			function() {
+				app_log('canplay');
+				visPlay();
+				streamPlayer.play();
+			});
+	}, 10000);
+
+	// Hides spinner and starts playback if the stream can start playing without
+	// gaps in playback
+	streamPlayer.addEventListener('canplaythrough',
+		function() {
+			app_log('canplaythrough');
+			app_log('<span style="padding-left: 15px;"> played: ' + streamPlayer.played.length + '</span>');
+			if (streamPlayer.played.length === 0) {
+				clearTimeout(timeout);
+				visPlay();
+				streamPlayer.play();
+			}
+		}, false);
+
+	//
+	streamPlayer.addEventListener('error',
+		function() {
+			showToast('An error occurred while trying to load the stream\nThe KJHK stream requires a stable data connection');
+			stop();
+		});
+
+	// If playback stops due to slow connection, display the loading indicator
+	streamPlayer.addEventListener("waiting",
+		function() {
+			app_log('waiting');
+			visLoad();
+			checkPause();
+		}, false);
+
+	// If playback stops due to slow connection, display the loading indicator
+	streamPlayer.addEventListener("stalled",
+		function() {
+			app_log('stalled');
+			showToast('Playback has stalled due to a slow data connection');
+		}, false);
+
+	// Make sure that the pause button appears and loading indicator is hidden on playback
+	streamPlayer.addEventListener("playing",
+		function() {
+			app_log('playing');
+			visPlay();
+		}, false);
+	// Make sure that the pause button appears and loading indicator is hidden on playback
+	streamPlayer.addEventListener("play",
+		function() {
+			app_log('play');
+			visPlay();
+		}, false);
+
+	playing = true;
+}
+
+function stop() {
+	app_log('stopping playback');
+	//Destroy the <audio> element so that it doesn't keep using data while paused
+	streamPlayer.pause();
+	source = streamPlayer.firstElementChild;
+	source.setAttribute('src', '');
+	streamPlayer.load();
+	document.getElementById('audioplayer').removeChild(streamPlayer);
+	streamPlayer = null; //This deletes all associated event listeners as well
+	clearTimeout(timeout);
+	visPause();
+	playing = false;
+}
+
+//Play and Pause
+function play_pause() {
 	var source;
 	if (!playing) {
-		app_log('preparing for playback');
-		//Start the music by creating a new <audio> element
-		$('#play-button').addClass('ng-hide');
-		$('#pause-button').addClass('loading');
-		$('#pause-button').removeClass('ng-hide');
-		$('#play-pause-mask').removeClass('ng-hide');
-		$('#stream-spinner').removeClass('ng-hide');
-
-		streamPlayer = document.createElement('audio');
-		source = document.createElement('source');
-		source.setAttribute('src', 'http://kjhkstream.org:8000/stream_low');
-		streamPlayer.appendChild(source);
-		streamPlayer.setAttribute('id', 'streamPlayer');
-
-		document.getElementById('audioplayer').appendChild(streamPlayer);
-
-		// If loading takes longer than 20 seconds, this event listener will cause
-		// the stream to play as soon as possible, even if the buffer is not large enough
-		// to play without gaps
-		timeout = setTimeout(function() {
-			app_log('canplay event listener set');
-			streamPlayer.addEventListener('canplay',
-				function() {
-					app_log('canplay');
-					visPlay();
-					streamPlayer.play();
-				});
-		}, 10000);
-
-		// Hides spinner and starts playback if the stream can start playing without
-		// gaps in playback
-		streamPlayer.addEventListener('canplaythrough',
-			function() {
-				app_log('canplaythrough');
-				app_log('<span style="padding-left: 15px;"> played: ' + streamPlayer.played.length + '</span>');
-				if (streamPlayer.played.length === 0) {
-					clearTimeout(timeout);
-					visPlay();
-					streamPlayer.play();
-				}
-			}, false);
-
-		// If playback stops due to slow connection, display the loading indicator
-		streamPlayer.addEventListener("waiting",
-			function() {
-				app_log('waiting');
-				visLoad();
-				checkPause();
-			}, false);
-
-		// If playback stops due to slow connection, display the loading indicator
-		streamPlayer.addEventListener("stalled",
-			function() {
-				app_log('stalled');
-				visLoad();
-				checkPause();
-			}, false);
-
-		// Make sure that the pause button appears and loading indicator is hidden on playback
-		streamPlayer.addEventListener("playing",
-			function() {
-				app_log('playing');
-				visPlay();
-			}, false);
-		// Make sure that the pause button appears and loading indicator is hidden on playback
-		streamPlayer.addEventListener("play",
-			function() {
-				app_log('play');
-				visPlay();
-			}, false);
-
-		playing = true;
+		play();
 	} else {
-		app_log('stopping playback');
-		//Destroy the <audio> element so that it doesn't keep using data while paused
-		streamPlayer.pause();
-		source = streamPlayer.firstElementChild;
-		source.setAttribute('src', '');
-		streamPlayer.load();
-		document.getElementById('audioplayer').removeChild(streamPlayer);
-		streamPlayer = null; //This deletes all associated event listeners as well
-		clearTimeout(timeout);
-		visPause();
-		playing = false;
+		stop();
 	}
 }
 
@@ -405,23 +439,3 @@ window.setInterval(function() {
 }, 15000);
 
 /******CONTACT******/
-
-
-/******TESTING******/
-var backlog = '';
-
-function app_log(msg) {
-	if (document.getElementById('app_logs')) {
-		document.getElementById('app_logs').innerHTML += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now().toFixed(2) + '</span></p>';
-	} else {
-		backlog += '<p style="width: 100%;">' + msg + '<span style="float: right;">' + window.performance.now().toFixed(2) + '</span></p>';
-	}
-}
-
-function app_buffered() {
-	if (streamPlayer && streamPlayer.readyState > 0) {
-		document.getElementById('app_data').innerHTML = '<p>BUFFERED: ' + streamPlayer.buffered.end(0) + '</p><p>PLAYBACK: ' + (streamPlayer.currentTime) + '</p><p>LOADED AHEAD: ' + (streamPlayer.buffered.end(0) - (streamPlayer.currentTime)) + '</p>';
-	} else {
-		document.getElementById('app_data').innerHTML = '<p>BUFFERED: n/a</p><p>PLAYBACK: n/a</p><p>LOADED AHEAD: n/a</p>';
-	}
-}
