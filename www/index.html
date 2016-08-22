@@ -34,7 +34,7 @@
     </ion-header-bar>
     <ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
 
-      <ion-tab class="balanced" title="STREAM" icon-on="ion-ios-filing" icon-off="ion-ios-filing-outline">
+      <ion-tab class="balanced" title="STREAM" icon-on="ion-ios-play" icon-off="ion-ios-play-outline">
         <!-- Tab 1 content -->
         <div class="content-container" ng-controller="StreamController" ng-init="streamInit()">
           <div onclick="hideToast();" class="toast hidden ng-hide">
@@ -89,7 +89,7 @@
         </div>
       </ion-tab>
 
-      <ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline">
+      <ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-telephone" icon-off="ion-ios-telephone-outline">
         <!-- Tab 3 content -->
         <div id="contact-container" class="content-container" ng-controller="ContactController" ng-init="contactInit()">
           <div onclick="hideToast();" class="toast hidden ng-hide">
@@ -97,14 +97,16 @@
               toast
             </p>
           </div>
-          <br>
-          <br>
           <!-- Request Line -->
-          <div class="request-line">
-            <a href="tel:+1-785-864-474" style="text-decoration: none; color: #FFFFFF; font-weight: 300;"> REQUEST LINE <br /> 785-864-4747 </a>
+          <div class="contact-label">
+            REQUEST LINE:
           </div>
+          <div class="request-line">
+            <a href="tel:+1-785-864-474" style="text-decoration: none; color: #FFFFFF; font-weight: 300;">785-864-4747</a>
+          </div>
+          <br>
           <!-- Connect With Us Prompt-->
-          <div class="connect-with-us">
+          <div class="contact-label">
             CONNECT WITH US:
           </div>
           <!-- Social Media Icon Table -->
