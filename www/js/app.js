@@ -113,21 +113,18 @@ function animateStreamSpinner() {
 }
 
 function visPlay() {
-	app_log('visPlay');
 	$('#stream-spinner').addClass('ng-hide');
 	$('#play-pause-mask').addClass('ng-hide');
 	$('#pause-button').removeClass('loading');
 }
 
 function visLoad() {
-	app_log('visLoad');
 	$('#stream-spinner').removeClass('ng-hide');
 	$('#play-pause-mask').removeClass('ng-hide');
 	$('#pause-button').addClass('loading');
 }
 
 function visPause() {
-	app_log('visPause');
 	$('#stream-spinner').addClass('ng-hide');
 	$('#play-pause-mask').addClass('ng-hide');
 	$('#pause-button').addClass('ng-hide');
@@ -140,19 +137,14 @@ function visPause() {
  *
  */
 function checkPause() {
-	app_log('checkPause');
-	app_log(streamPlayer.played.length);
 	if(streamPlayer.played.length) {
-		app_log('checkPause you played something');
 		visPlay();
 	} else {
-		app_log('checkPause in a second');
 		setTimeout(checkPause, 1000);
 	}
 }
 
 function play() {
-	app_log('preparing for playback');
 	//Start the music by creating a new <audio> element
 	$('#play-button').addClass('ng-hide');
 	$('#pause-button').addClass('loading');
@@ -172,10 +164,8 @@ function play() {
 	// the stream to play as soon as possible, even if the buffer is not large enough
 	// to play without gaps
 	timeout = setTimeout(function() {
-		app_log('canplay event listener set');
 		streamPlayer.addEventListener('canplay',
 			function() {
-				app_log('canplay');
 				visPlay();
 				streamPlayer.play();
 			});
@@ -185,8 +175,6 @@ function play() {
 	// gaps in playback
 	streamPlayer.addEventListener('canplaythrough',
 		function() {
-			app_log('canplaythrough');
-			app_log('<span style="padding-left: 15px;"> played: ' + streamPlayer.played.length + '</span>');
 			if (streamPlayer.played.length === 0) {
 				clearTimeout(timeout);
 				visPlay();
@@ -204,7 +192,6 @@ function play() {
 	// If playback stops due to slow connection, display the loading indicator
 	streamPlayer.addEventListener("waiting",
 		function() {
-			app_log('waiting');
 			visLoad();
 			checkPause();
 		}, false);
@@ -212,20 +199,17 @@ function play() {
 	// If playback stops due to slow connection, display the loading indicator
 	streamPlayer.addEventListener("stalled",
 		function() {
-			app_log('stalled');
 			showToast('Playback has stalled due to a slow data connection');
 		}, false);
 
 	// Make sure that the pause button appears and loading indicator is hidden on playback
 	streamPlayer.addEventListener("playing",
 		function() {
-			app_log('playing');
 			visPlay();
 		}, false);
 	// Make sure that the pause button appears and loading indicator is hidden on playback
 	streamPlayer.addEventListener("play",
 		function() {
-			app_log('play');
 			visPlay();
 		}, false);
 
@@ -233,7 +217,6 @@ function play() {
 }
 
 function stop() {
-	app_log('stopping playback');
 	//Destroy the <audio> element so that it doesn't keep using data while paused
 	streamPlayer.pause();
 	source = streamPlayer.firstElementChild;
