@@ -54,8 +54,7 @@ angular.module('KJHKApp')
 	});
 angular.module('KJHKApp')
 	.controller('ContactController', function($scope, $http) {
-		$scope.contactInit = function() {
-		};
+		$scope.contactInit = function() {};
 	});
 
 /****** TOAST ******/
@@ -137,7 +136,7 @@ function visPause() {
  *
  */
 function checkPause() {
-	if(streamPlayer.played.length) {
+	if (streamPlayer.played.length) {
 		visPlay();
 	} else {
 		setTimeout(checkPause, 1000);
