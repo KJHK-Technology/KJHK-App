@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
-
   <title>KJHK App</title>
 
   <link rel="stylesheet" href="css/style.css">
@@ -21,7 +20,6 @@
   <!-- JQuery -->
   <script src="js/jquery-2.2.0.js"></script>
 
-
   <!-- your app's js -->
   <script src="js/app.js"></script>
 
@@ -30,7 +28,7 @@
 <body ng-app="KJHKApp">
   <ion-pane>
     <ion-header-bar class="bar-dark" id="header-bar">
-      <h1 class="title">KJHK</h1>
+      <div style="width: 100%;"><img height="34px" src="img/kjhk-name.svg" style="margin: 0 auto; display: block;"></div>
     </ion-header-bar>
     <ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
 
@@ -55,8 +53,7 @@
             <h2 id="nowplaying-song" class="nowplaying"></h2>
             <h3 id="nowplaying-artist" class="nowplaying"></h3>
           </div>
-          <div id="audioplayer">
-          </div>
+          <div id="audioplayer"></div>
         </div>
       </ion-tab>
 
@@ -73,13 +70,16 @@
               <h3 id="music-log-date">Music Logs for...</h3>
             </div>
             <div id="music-logs-buttons">
-              <div ng-click="swipeRight()" class="music-logs-button" id="music-logs-prev">&lt</div>
-              <div ng-click="swipeLeft()" class="music-logs-button" id="music-logs-next">&gt</div>
+              <div ng-click="swipeRight()" class="music-logs-button" id="music-logs-prev">
+                <div class="ion-ios-arrow-left" style="font-size: 40px; text-align: center;"></div>
+              </div>
+              <div ng-click="swipeLeft()" class="music-logs-button" id="music-logs-next">
+                <div class="ion-ios-arrow-right" style="font-size: 40px; text-align: center;"></div>
+              </div>
             </div>
           </div>
           <ion-scroll id="music-logs-scroll" ng-controller="PlaylistsController" delegate-handle="logs" zooming="false" has-bouncing="true" direction="y" on-swipe-right="swipeRight()" on-swipe-left="swipeLeft()">
-            <ion-refresher pulling-text="Pull to refresh..." on-refresh="playlistRefresh()">
-            </ion-refresher>
+            <ion-refresher pulling-text="Pull to refresh..." on-refresh="playlistRefresh()"></ion-refresher>
             <div id="music-logs-wrapper">
               <div id="music-logs">
                 <ion-spinner id="logs-spinner" class="spinner-lg"></ion-spinner>
@@ -98,12 +98,16 @@
             </p>
           </div>
           <!-- Request Line -->
+          <br>
+          <br>
           <div class="contact-label">
             REQUEST LINE:
           </div>
-          <div class="request-line">
-            <a href="tel:+1-785-864-474" style="text-decoration: none; color: #FFFFFF; font-weight: 300;">785-864-4747</a>
-          </div>
+          <a href="tel:+1-785-864-474" style="text-decoration: none; color: #FFFFFF; font-weight: 300;">
+            <div class="request-line">
+              785-864-4747
+            </div>
+          </a>
           <br>
           <!-- Connect With Us Prompt-->
           <div class="contact-label">

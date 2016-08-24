@@ -49,7 +49,6 @@ angular.module('KJHKApp')
 	.controller('StreamController', function($scope, $http) {
 		$scope.streamInit = function() {
 			console.log('Initializing Stream...');
-			animateStreamSpinner();
 		};
 	});
 angular.module('KJHKApp')
@@ -89,27 +88,6 @@ var playing = false;
 var timeout;
 
 var streamSpinnerDeg = 0;
-
-function animateStreamSpinner() {
-	$spinner = $('#stream-spinner');
-	$({
-		deg: 0
-	}).animate({
-		deg: 360
-	}, {
-		duration: 1500,
-		step: function(now) {
-			$spinner.css({
-				transform: 'rotate(' + now + 'deg)',
-				'-webkit-transform': 'rotate(' + now + 'deg)'
-			});
-		},
-		easing: 'linear',
-		complete: function() {
-			animateStreamSpinner();
-		}
-	});
-}
 
 function visPlay() {
 	$('#stream-spinner').addClass('ng-hide');

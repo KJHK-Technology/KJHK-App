@@ -1,4 +1,5 @@
-/******General Stuff******/
+  /******General Stuff******/
+
 h1, h2, h3, h4, h5, h6 {
   font-weight: bolder !important;
   font-family: sans-serif;
@@ -16,37 +17,43 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.19);
 }
 
+.title {
+  
+}
+
 /******Toast Notifications******/
+
 .toast {
-    z-index: 1000;
-    margin: 0 10% 0 10%;
-    position: fixed;
-    display: inline-block;
-    bottom: 20px;
-    min-height: 20px;
-    width: 80%;
-    background-color: #DBE0E3;
-    opacity: 1.0;
-    transition: opacity .3s ease-in;
-    -webkit-transition: opacity .3s ease-in;
-    border-radius: 10px;
-    box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  margin: 0 10% 0 10%;
+  position: fixed;
+  display: inline-block;
+  bottom: 20px;
+  min-height: 20px;
+  width: 80%;
+  background-color: #DBE0E3;
+  opacity: 1.0;
+  transition: opacity .3s ease-in;
+  -webkit-transition: opacity .3s ease-in;
+  border-radius: 10px;
+  box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 .toast.hidden {
-    opacity: 0.0;
-    transition: opacity 1s ease-in;
-    -webkit-transition: opacity 1s ease-in;
+  opacity: 0.0;
+  transition: opacity 1s ease-in;
+  -webkit-transition: opacity 1s ease-in;
 }
 .toast-message {
-    width: 100%;
-    color: #111;
-    text-align: center;
-    font-family: sans-serif;
-    vertical-align: middle;
+  width: 100%;
+  color: #111;
+  text-align: center;
+  font-family: sans-serif;
+  vertical-align: middle;
 }
 
 /******Playlists Stuff******/
+
 #music-logs-container {
   display: flex;
   flex-direction: column;
@@ -129,7 +136,7 @@ div.scroll {
   padding: 0 5%;
   width: 100%;
   text-align: left;
-  color: #FFF;
+  color: #DBE0E3;
 }
 .music-entry-time {
   order: 1;
@@ -148,11 +155,11 @@ div.scroll {
   background-color: #1B2527;
 }
 .music-logs-button {
-  font-size: 20px;
-  font-weight: 900;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  line-height: 40px;
   position: relative;
-  width: 20px;
-  height: 30px;
   background-color: #DBE0E3;
   text-align: center;
   vertical-align: middle;
@@ -161,93 +168,83 @@ div.scroll {
 .music-logs-button:active {
   background-color: #C1C6C9;
 }
-.music-logs-button::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  right: -15px;
-  background-color: inherit;
-  height: 100%;
-  width: 30px;
-  border-radius: 100%;
-}
-.music-logs-button::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: -15px;
-  background-color: inherit;
-  height: 100%;
-  width: 30px;
-  border-radius: 100%;
-}
 
 /******Stream Player Stuff******/
-#headline {
-  font-size: 40px;
-}
-#audioUI {
-  width: 100%;
-  border: none;
-  position: fixed;
-  top: 40%;
-}
-#play-pause-container {
-  position: relative;
-  text-align: center;
-  width: 100%;
-}
-#play-pause-mask {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  z-index: 10;
-  background-color: rgba(55, 61, 68, 0.5);
-}
-#play-button {
-  display: block;
-  margin: -50px auto auto;
-  z-index: 1;
-  fill: #DBE0E3;
-  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.19);
-  border-radius: 50%;
-}
-#pause-button {
-  display: block;
-  margin: -50px auto auto;
-  text-align: center;
-  z-index: 1;
-  fill: #DBE0E3;
-  box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.19);
-  border-radius: 50%;
-}
-#pause-button.loading {
-  fill: #9A9EA0;
-}
-#stream-spinner {
-  position: absolute;
-  top: calc(50% - 125px);
-  left: calc(50% - 125px);
-  z-index: 15;
-  -webkit-transform: rotate(0deg);
-  transform: rotate(0deg);
-}
-#current-song {
-  padding: 0 10px 0 10px;
-  position: absolute;
-  bottom: 45px;
-  width: 100%;
-}
-.nowplaying {
-  font-weight: 100 !important;
-  text-align: center;
-}
-#nowplaying-artist {
-  font-style: italic;
-}
-
-/* CONTACT */
-.request-line {
+  #headline {
+    font-size: 40px;
+  }
+  #audioUI {
+    width: 100%;
+    border: none;
+    position: fixed;
+    top: 40%;
+  }
+  #play-pause-container {
+    position: relative;
+    text-align: center;
+    width: 100%;
+  }
+  #play-pause-mask {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    background-color: rgba(55, 61, 68, 0.5);
+  }
+  #play-button {
+    display: block;
+    margin: -50px auto auto;
+    z-index: 1;
+    fill: #DBE0E3;
+    box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.19);
+    border-radius: 50%;
+  }
+  #pause-button {
+    display: block;
+    margin: -50px auto auto;
+    text-align: center;
+    z-index: 1;
+    fill: #DBE0E3;
+    box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.19);
+    border-radius: 50%;
+  }
+  #pause-button.loading {
+    fill: #9A9EA0;
+  }
+  #stream-spinner {
+    position: absolute;
+    top: calc(50% - 125px);
+    left: calc(50% - 125px);
+    z-index: 15;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+  @-webkit-keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+  @keyframes spin {
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  #current-song {
+    padding: 0 10px 0 10px;
+    position: absolute;
+    bottom: 45px;
+    width: 100%;
+  }
+  .nowplaying {
+    font-weight: 100 !important;
+    text-align: center;
+  }
+  #nowplaying-artist {
+    font-style: italic;
+  }
+  /* CONTACT */
+  .request-line {
     height: 80px;
     position: relative;
     width: calc(80% - 80px);
@@ -257,11 +254,11 @@ div.scroll {
     font-size: 2em;
     text-align: center;
     vertical-align: middle;
-    box-shadow: 0px 10px 9px -12.5px #000,0px -10px 8px -12.5px #000;
+    box-shadow: 0px 10px 9px -12.5px #000, 0px -10px 8px -12.5px #000;
     font-weight: 100 !important;
     font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
-}
-.request-line::before {
+  }
+  .request-line::before {
     content: ' ';
     position: absolute;
     left: -40px;
@@ -272,8 +269,8 @@ div.scroll {
     background-color: #007685;
     z-index: -1;
     box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.15);
-}
-.request-line::after {
+  }
+  .request-line::after {
     content: ' ';
     position: absolute;
     right: -40px;
@@ -284,34 +281,33 @@ div.scroll {
     background-color: #007685;
     z-index: -1;
     box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.15);
-}
-.contact-label {
-  position: relative;
-  color: #FFFFFF;
-  width: calc(80% - 10px);
-  margin: auto;
-  line-height: 10vh;
-  font-size: 2em;
-  text-align: center;
-  vertical-align: middle;
-  font-weight: 100 !important;
-  font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif
-}
-.social-media-table {
-  position: relative;
-  margin: auto;
-  margin-top: 4vh;
-}
-.td, th{
-  position: relative;
-  height: 20vw;
-  width: 20vw;
-  filter: drop-shadow(10px 10px 20px black);
-}
-.social-link {
-  position: relative;
-  height:25vw;
-  width:25vw;
-  padding: 1rem;
-
-}
+  }
+  .contact-label {
+    position: relative;
+    color: #DBE0E3;
+    width: calc(80% - 10px);
+    margin: auto;
+    line-height: 10vh;
+    font-size: 2em;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 100 !important;
+    font-family: "-apple-system", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif
+  }
+  .social-media-table {
+    position: relative;
+    margin: auto;
+    margin-top: 4vh;
+  }
+  .td, th {
+    position: relative;
+    height: 20vw;
+    width: 20vw;
+    filter: drop-shadow(10px 10px 20px black);
+  }
+  .social-link {
+    position: relative;
+    height: 25vw;
+    width: 25vw;
+    padding: 1rem;
+  }
