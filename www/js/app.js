@@ -9,9 +9,7 @@ angular.module('KJHKApp', ['ionic'])
 				// for form inputs)
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-				// Don't remove this line unless you know what you are doing. It stops the viewport
-				// from snapping when text inputs are focused. Ionic handles this internally for
-				// a much nicer keyboard experience.
+				// Ionic handles this internally for a much nicer keyboard experience.
 				cordova.plugins.Keyboard.disableScroll(true);
 			}
 			if (window.StatusBar) {
@@ -20,13 +18,18 @@ angular.module('KJHKApp', ['ionic'])
 		});
 	});
 
+angular.module('ionicApp', ['ionic']).config(function($ionicConfigProvider) {
+	if (ionic.Platform.isAndroid())
+		$ionicConfigProvider.scrolling.jsScrolling(false);
+});
+
 //This handles all the playlist angular UI functions
 angular.module('KJHKApp')
 	.controller('PlaylistsController', function($scope, $http, $ionicScrollDelegate) {
 		$scope.playlistsInit = function() {
 			console.log('Initializing Playlists...');
 			playlistSlides[0].innerHTML = preloadSlide;
-			playlistsLoad();
+			loadPlaylists();
 		};
 		$scope.playlistRefresh = function() {
 			console.log('Refreshing playlist');
@@ -376,7 +379,7 @@ function updateDate() {
 	document.getElementById('music-log-date').innerHTML = 'Music Logs for ' + monthStrings[date.getMonth()] + ' ' + date.getDate();
 }
 
-function playlistsLoad() {
+function loadPlaylists() {
 	//prepare playlistSlides elements
 	$(playlistSlides[0]).addClass('slide active');
 	for (var i = 0; i < playlistSlides.length; ++i) {

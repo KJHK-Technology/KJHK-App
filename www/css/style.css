@@ -18,7 +18,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .title {
-  
+
 }
 
 /******Toast Notifications******/
@@ -282,13 +282,18 @@ div.scroll {
     z-index: -1;
     box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.15);
   }
+  .request-line-text {
+    position: absolute;
+    left: -20px;
+    width: calc(100% + 40px);
+  }
   .contact-label {
     position: relative;
     color: #DBE0E3;
     width: calc(80% - 10px);
     margin: auto;
     line-height: 10vh;
-    font-size: 2em;
+    font-size: 1.6em;
     text-align: center;
     vertical-align: middle;
     font-weight: 100 !important;
