@@ -353,6 +353,7 @@ function transitionSlide(element) {
 	}
 	$(element).removeClass('before after');
 	$(element).addClass('active');
+    $('#music-logs').height($('.slide.active').height());
 }
 
 /**
