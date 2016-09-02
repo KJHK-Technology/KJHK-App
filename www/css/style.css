@@ -69,11 +69,12 @@ h1, h2, h3, h4, h5, h6 {
   z-index: -5;
 }
 #music-log-date {
-  margin-top: 10px;
+  position: absolute;
+  bottom: 15px;
   text-align: center;
   width: 100%;
   text-transform: uppercase;
-  font-weight: 400 !important;
+  font-weight: 200 !important;
   font-size: 1.6em;
 }
 #music-logs-scroll {
@@ -102,10 +103,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 #music-logs-prev {
   position: absolute;
+  bottom: 18px;
   left: 10%;
 }
 #music-logs-next {
   position: absolute;
+  bottom: 18px;
   right: 10%;
 }
 div.scroll {

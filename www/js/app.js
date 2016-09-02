@@ -193,6 +193,8 @@ function play() {
 			visPlay();
 		}, false);
 
+		streamPlayer.play();
+
 	playing = true;
 }
 
@@ -377,7 +379,7 @@ function changeDay(num) {
 function updateDate() {
 	var date = new Date();
 	date.setDate(date.getDate() - logDay);
-	document.getElementById('music-log-date').innerHTML = 'Music Logs for ' + monthStrings[date.getMonth()] + ' ' + date.getDate();
+	document.getElementById('music-log-date').innerHTML = 'Logs for ' + (date.getMonth() + 1) + '/' + date.getDate();
 }
 
 function loadPlaylists() {
