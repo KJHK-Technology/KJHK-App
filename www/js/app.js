@@ -33,7 +33,7 @@ angular.module('KJHKApp')
 		};
 		$scope.playlistRefresh = function() {
 			console.log('Refreshing playlist');
-			changeDay(logDay);
+			changeDay(0);
 			$scope.$broadcast('scroll.refreshComplete');
 		};
 		$scope.swipeRight = function() {
