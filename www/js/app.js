@@ -219,7 +219,7 @@ Stream.prototype = {
 		this.audio.addEventListener("stalled",
 			function() {
                 console.log('stalled');
-				toast.show('Playback has stalled<br>You may need to update your <a href="#" onclick="event.stopPropagation(); window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">Webview</a>');
+				toast.show('Playback has stalled<br>You may need to update your <a href="#" onclick="var event = arguments[0] || window.event; event.stopPropagation(); window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">Webview</a>');
 			}, false);
 
 		// Make sure that the pause button appears and loading indicator is hidden on playback
