@@ -1,0 +1,11 @@
+{
+  "name": "90.7fm KJHK",
+  "short_name": "KJHK",
+  "start_url": "index.html",
+  "display": "standalone",
+  "icons": [{
+    "src": "icon.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }]
+}
