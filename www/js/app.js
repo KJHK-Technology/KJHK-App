@@ -101,6 +101,8 @@ function Stream() {
 
     this.context = new AudioContext();
 
+    this.src = 'http://kjhkstream.org/stream_low';
+
 	this.visual = {
 		play: function() {
 			$('#stream-spinner').addClass('ng-hide');
@@ -159,23 +161,21 @@ Stream.prototype = {
         this.audio.crossOrigin = "anonymous";
 
 		source = document.createElement('source');
-		source.setAttribute('src', 'http://kjhkstream.org:8000/stream_low');
+		source.setAttribute('src', this.src);
 	    this.audio.appendChild(source);
 		this.audio.setAttribute('id', 'audio-element');
         document.getElementById('audioplayer').appendChild(this.audio);
 
-        /*
         // Our <audio> element will be the audio source.
-        this.mediasource = this.context.createMediaElementSource(document.getElementById('audio-element'));
+        this.mediasource = this.context.createMediaElementSource(this.audio);
         this.analyser = this.context.createAnalyser();
         this.mediasource.connect(this.analyser);
         this.analyser.fftSize = 2048;
         this.analyser.connect(this.context.destination);
-        */
 
 		document.getElementById('audioplayer').appendChild(this.audio);
 
-        //this.interval = setInterval(this.processAudio, 500, false);
+        this.interval = setInterval(this.processAudio, 100, false);
 
 		// If loading takes longer than 20 seconds, this event listener will cause
 		// the stream to play as soon as possible, even if the buffer is not large enough
@@ -250,24 +250,12 @@ Stream.prototype = {
             function() {
                 console.log('waiting');
             }, false);
-        /*
-        this.audio.addEventListener("timeupdate",
-            function() {
-                console.log('timeupdate');
-            }, false);
-        this.audio.addEventListener("progress",
-            function() {
-                console.log('progress');
-            }, false);
-            */
-
-
-		//this.audio.play();
-
-		this.playing = true;
+    	this.playing = true;
 	},
 
 	stop: function() {
+        window.clearInterval(this.interval);
+        $('#bounce').css('border-width', 10);
 		//Destroy the <audio> element so that it doesn't keep using data while paused
 		this.audio.pause();
 		source = this.audio.firstElementChild;
@@ -291,16 +279,18 @@ Stream.prototype = {
 	},
 
     processAudio: function() {
-        var bufferLength = stream.analyser.frequencyBinCount;
-        var dataArray = new Uint8Array(bufferLength);
-        stream.analyser.getByteTimeDomainData(dataArray);
-        for(var i = 0; i < dataArray.length; ++i) {
-            if(dataArray[i] != 128) {
-                window.clearInterval(stream.interval);
-                stream.visual.play();
-                break;
-            }
+        var len = stream.analyser.frequencyBinCount;
+        var arr = new Uint8Array(len);
+        stream.analyser.getByteTimeDomainData(arr);
+        arr = Array.from(arr);
+        var sum = 0;
+        var i;
+        for(i = 0; i < len; i += 5) {
+            sum += Math.abs(arr[i] - 128);
         }
+        var avg = sum/(i/5);
+        console.log(avg);
+        $('#bounce').css('border-width', 10 + avg);
     }
 };
 
