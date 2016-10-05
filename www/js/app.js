@@ -105,6 +105,7 @@ function Stream() {
 
 	this.visual = {
 		play: function() {
+            $('#bounce').removeClass('off');
 			$('#stream-spinner').addClass('ng-hide');
 			$('#play-pause-mask').addClass('ng-hide');
 			$('#pause-button').removeClass('loading');
@@ -117,6 +118,8 @@ function Stream() {
 		},
 
 		pause: function() {
+            $('#bounce').addClass('off');
+            $('#bounce').css('border-width', 10);
 			$('#stream-spinner').addClass('ng-hide');
 			$('#play-pause-mask').addClass('ng-hide');
 			$('#pause-button').addClass('ng-hide');
@@ -171,7 +174,9 @@ Stream.prototype = {
         this.analyser = this.context.createAnalyser();
         this.mediasource.connect(this.analyser);
         this.analyser.fftSize = 2048;
-        this.analyser.connect(this.context.destination);
+        this.delay = this.context.createDelay(1.3);
+        this.analyser.connect(this.delay);
+        this.delay.connect(this.context.destination);
 
 		document.getElementById('audioplayer').appendChild(this.audio);
 
@@ -255,7 +260,6 @@ Stream.prototype = {
 
 	stop: function() {
         window.clearInterval(this.interval);
-        $('#bounce').css('border-width', 10);
 		//Destroy the <audio> element so that it doesn't keep using data while paused
 		this.audio.pause();
 		source = this.audio.firstElementChild;
@@ -279,18 +283,24 @@ Stream.prototype = {
 	},
 
     processAudio: function() {
-        var len = stream.analyser.frequencyBinCount;
+        var len = 200;
+        // var len = stream.analyser.frequencyBinCount;
         var arr = new Uint8Array(len);
         stream.analyser.getByteTimeDomainData(arr);
         arr = Array.from(arr);
         var sum = 0;
         var i;
-        for(i = 0; i < len; i += 5) {
+        var iter = 3;
+        for(i = 0; i < len; i += iter) {
             sum += Math.abs(arr[i] - 128);
         }
-        var avg = sum/(i/5);
+        var avg = sum/(i/iter);
+        avg = 10 + (avg * (avg / 4));
+        if(avg > 50) {
+            avg -= (avg % 50) * 0.75;
+        }
         console.log(avg);
-        $('#bounce').css('border-width', 10 + avg);
+        $('#bounce').css('border-width', avg);
     }
 };
 
