@@ -43,6 +43,9 @@ angular.module('KJHK')
 			playlists.changeDay(0);
 			$scope.$broadcast('scroll.refreshComplete');
 		};
+		$scope.playlistsResize = function() {
+			$ionicScrollDelegate.resize();
+		};
 		$scope.swipeRight = function() {
 			playlists.changeDay(1);
 			$scope.scrollToTop();
@@ -413,6 +416,10 @@ Playlists.prototype = {
 				logs += items.join('');
 			}
 			playlists.playlistSlides[day].innerHTML = logs;
+			if($(playlists.playlistSlides[day]).hasClass('active')) {
+				//resize scroll
+				angular.element($('#music-logs-container')[0]).scope().playlistsResize();
+			}
 		});
 	},
 
