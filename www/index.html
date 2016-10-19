@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+
+  <!-- fixes request line link styling on iOS -->
+  <meta name="format-detection" content="telephone=no">
+
+  <title>KJHK App</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <!-- compiled css output -->
+  <link href="css/ionic.app.css" rel="stylesheet">
+
+  <!-- ionic/angularjs js -->
+  <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+  <!-- cordova script (this will be a 404 during development) -->
+  <script src="cordova.js"></script>
+
+  <!-- JQuery -->
+  <script src="js/jquery-2.2.0.js"></script>
+
+  <!-- your app's js -->
+  <script src="js/app.js"></script>
+
+</head>
+
+<body ng-app="KJHK">
+  <ion-pane>
+    <ion-header-bar class="bar-dark" id="header-bar">
+      <div style="width: 100%;"><img height="34px" src="img/kjhk-name.svg" style="margin: 0 auto; display: block;"></div>
+    </ion-header-bar>
+    <ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
+
+      <ion-tab class="balanced" title="STREAM" icon-on="ion-ios-play" icon-off="ion-ios-play-outline">
+        <!-- Tab 1 content -->
+        <div class="content-container" ng-controller="StreamController" ng-init="streamInit()">
+          <div onclick="toast.hide();" class="toast hidden ng-hide">
+            <p class="toast-message">
+              toast
+            </p>
+          </div>
+          <div id="audioUI">
+            <div id="play-pause-container">
+              <div id="bounce" onclick="stream.play_pause()"></div>
+              <div id="play-pause-mask" class="ng-hide" onclick="stream.play_pause()">
+                <img src="img/spinner.svg" id="stream-spinner">
+              </div>
+              <img src="img/play.svg" id="play-button" class="" onclick="stream.play_pause()" />
+              <img id="pause-button" class="ng-hide" src="img/pause.svg" width="200px" height="200px" onclick="stream.play_pause()" />
+            </div>
+          </div>
+          <div id="current-song">
+            <h2 id="nowplaying-song" class="nowplaying"></h2>
+            <h3 id="nowplaying-artist" class="nowplaying"></h3>
+          </div>
+          <div id="audioplayer"></div>
+        </div>
+      </ion-tab>
+
+      <ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-list" icon-off="ion-ios-list-outline">
+        <!-- Tab 2 content -->
+        <div id="music-logs-container" class="content-container" ng-controller="PlaylistsController" ng-init="playlistsInit()">
+          <div onclick="toast.hide();" class="toast hidden ng-hide">
+            <p class="toast-message">
+              toast
+            </p>
+          </div>
+          <div id="music-logs-head">
+            <div>
+              <h4 id="music-log-date">Music Logs for...</h4>
+            </div>
+            <div id="music-logs-buttons">
+              <div ng-click="swipeRight()" class="music-logs-button" id="music-logs-prev">
+                <div class="ion-ios-arrow-back" style="font-size: 40px; text-align: center;"></div>
+              </div>
+              <div ng-click="swipeLeft()" class="music-logs-button" id="music-logs-next">
+                <div class="ion-ios-arrow-forward" style="font-size: 40px; text-align: center;"></div>
+              </div>
+            </div>
+          </div>
+          <ion-scroll id="music-logs-scroll" ng-controller="PlaylistsController" delegate-handle="logs" zooming="false" has-bouncing="true" direction="y" on-swipe-right="swipeRight()" on-swipe-left="swipeLeft()">
+            <ion-refresher pulling-text="Pull to refresh..." on-refresh="playlistRefresh()"></ion-refresher>
+            <div id="music-logs-wrapper">
+              <div id="music-logs">
+                <ion-spinner id="logs-spinner" class="spinner-lg"></ion-spinner>
+              </div>
+            </div>
+          </ion-scroll>
+        </div>
+      </ion-tab>
+
+      <ion-tab class="balanced" title="CONTACT" icon-on="ion-ios-telephone" icon-off="ion-ios-telephone-outline">
+        <!-- Tab 3 content -->
+        <div id="contact-container" class="content-container" ng-controller="ContactController" ng-init="contactInit()">
+          <div onclick="toast.hide();" class="toast hidden ng-hide">
+            <p class="toast-message">
+              toast
+            </p>
+          </div>
+          <!-- Request Line -->
+          <br>
+          <br>
+          <div class="contact-label">
+            REQUEST LINE:
+          </div>
+          <a class="request-line-link" onclick="window.open('tel:+1-785-864-4747', '_system', 'location=true');">
+            <div class="request-line">
+              <div class="request-line-text" style="text-decoration: none; color: #FFFFFF; font-weight: 300;">785-864-4747</div>
+            </div>
+          </a>
+          <br>
+          <!-- Connect With Us Prompt-->
+          <div class="contact-label">
+            CONNECT WITH US:
+          </div>
+          <!-- Social Media Icon Table -->
+          <table class="social-media-table">
+            <tr>
+              <td>
+                <a href="#" class="svg" onclick="window.open('http://kjhk.org/web/', '_system', 'location=true');">
+                  <img src="img/kjhk-webs_DS.svg" class="social-link">
+                </a>
+              </td>
+              <td>
+                <a href="#" class="svg" onclick="window.open('https://www.facebook.com/KJHK907/', '_system', 'location=true')">
+                  <img src="img/Facebook_DS.svg" class="social-link">
+                </a>
+              </td>
+              <td>
+                <a href="#" class="svg" onclick="window.open('https://twitter.com/kjhk', '_system', 'location=true')">
+                  <img src="img/Twitter_DS.svg" class="social-link">
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="#" class="svg" onclick="window.open('https://www.youtube.com/user/KJHKLive', '_system', 'location=true')">
+                  <img src="img/Youtube_DS.svg" class="social-link">
+                </a>
+              </td>
+              <td>
+                <a href="#" class="svg" onclick="window.open('https://www.instagram.com/kjhk90_7', '_system', 'location=true')">
+                  <img src="img/Instagram_DS2.svg" class="social-link">
+                </a>
+              </td>
+              <td>
+                <a href="#" class="svg" onclick="window.open('http://www.snapchat.com/add/kjhk', '_system', 'location=true')">
+                  <img src="img/Snapchat_DS.svg" class="social-link">
+                </a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </ion-tab>
+    </ion-tabs>
+  </ion-pane>
+</body>
+
+</html>
