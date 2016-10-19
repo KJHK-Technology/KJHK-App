@@ -99,27 +99,42 @@ function Stream() {
 	// Used to keep track of whether the stream is playing or not
 	this.playing = false;
 
-    this.context = new AudioContext();
+	try {
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		this.context = new AudioContext();
+	} catch (e) {
+		toast.show('For the best KJHK app experience, please update your <a href="#" onclick="window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">webview</a>');
+		this.context = false;
+	}
 
-    this.src = 'http://kjhkstream.org/stream_low';
+	this.src = 'http://kjhkstream.org/stream_low';
+	// this.src = 'wildfire.mp3';
+
+	this.queue = [0, 0, 0, 0];
 
 	this.visual = {
 		play: function() {
-            $('#bounce').removeClass('off');
+			$('#bounce').removeClass('off');
 			$('#stream-spinner').addClass('ng-hide');
 			$('#play-pause-mask').addClass('ng-hide');
 			$('#pause-button').removeClass('loading');
+			$('#bounce').removeClass('loading');
 		},
 
 		load: function() {
-			$('#stream-spinner').removeClass('ng-hide');
-			$('#play-pause-mask').removeClass('ng-hide');
-			$('#pause-button').addClass('loading');
-		},
+			$('#bounce').addClass('loading');
 
+			$('#play-button').addClass('ng-hide');
+			$('#pause-button').addClass('loading');
+			$('#pause-button').removeClass('ng-hide');
+			$('#play-pause-mask').removeClass('ng-hide');
+			$('#stream-spinner').removeClass('ng-hide');
+		},
 		pause: function() {
-            $('#bounce').addClass('off');
-            $('#bounce').css('border-width', 10);
+			stream.queue = [0, 0, 0, 0];
+			$('#bounce').addClass('off');
+			$('#bounce').css('border-width', 10);
+			$('#bounce').removeClass('loading');
 			$('#stream-spinner').addClass('ng-hide');
 			$('#play-pause-mask').addClass('ng-hide');
 			$('#pause-button').addClass('ng-hide');
@@ -132,55 +147,33 @@ function Stream() {
 }
 
 Stream.prototype = {
-
-	/**
-	 * Checks if the stream is playing and updates the classes of the UI if it is.  If not, this will recurse through a 1s timeout
-	 * This is necessary because some browsers will not fire the 'playing' event after playback stalls
-	 * @deprecated
-	 */
-	checkPause: function() {
-		if (this.audio.played.length) {
-			this.visual.play();
-		} else {
-			setTimeout(checkPause, 1000);
-		}
-	},
-
-    hasPlayed: function() {
-        return this.audio.played.length !== 0;
-    },
-
 	play: function() {
 		//Start the music by creating a new <audio> element
-		$('#play-button').addClass('ng-hide');
-		$('#pause-button').addClass('loading');
-		$('#pause-button').removeClass('ng-hide');
-		$('#play-pause-mask').removeClass('ng-hide');
-		$('#stream-spinner').removeClass('ng-hide');
+		this.visual.load();
 
 		this.audio = document.createElement('audio');
 
-        //prevents CORS issues
-        this.audio.crossOrigin = "anonymous";
+		//prevents CORS issues
+		this.audio.crossOrigin = "anonymous";
 
 		source = document.createElement('source');
 		source.setAttribute('src', this.src);
-	    this.audio.appendChild(source);
+		this.audio.appendChild(source);
 		this.audio.setAttribute('id', 'audio-element');
-        document.getElementById('audioplayer').appendChild(this.audio);
-
-        // Our <audio> element will be the audio source.
-        this.mediasource = this.context.createMediaElementSource(this.audio);
-        this.analyser = this.context.createAnalyser();
-        this.mediasource.connect(this.analyser);
-        this.analyser.fftSize = 2048;
-        this.delay = this.context.createDelay(1.3);
-        this.analyser.connect(this.delay);
-        this.delay.connect(this.context.destination);
-
 		document.getElementById('audioplayer').appendChild(this.audio);
 
-        this.interval = setInterval(this.processAudio, 100, false);
+		if (this.context) {
+			// If the web audio api is available, add enhancements
+			// Our <audio> element will be the audio source.
+			this.mediasource = this.context.createMediaElementSource(this.audio);
+			this.analyser = this.context.createAnalyser();
+			this.mediasource.connect(this.analyser);
+			this.analyser.fftSize = 32;
+			this.delay = this.context.createDelay(0.6);
+			this.analyser.connect(this.delay);
+			this.delay.connect(this.context.destination);
+			this.interval = setInterval(this.processAudio, 100, false);
+		}
 
 		// If loading takes longer than 20 seconds, this event listener will cause
 		// the stream to play as soon as possible, even if the buffer is not large enough
@@ -188,7 +181,7 @@ Stream.prototype = {
 		this.timeout = setTimeout(function() {
 			stream.audio.addEventListener('canplay',
 				function() {
-                    console.log('canplay');
+					console.log('canplay');
 					stream.visual.play();
 					stream.audio.play();
 				});
@@ -198,7 +191,7 @@ Stream.prototype = {
 		// gaps in playback
 		this.audio.addEventListener('canplaythrough',
 			function() {
-                console.log('canplaythrough');
+				console.log('canplaythrough');
 				if (stream.audio.played.length === 0) {
 					clearTimeout(stream.timeout);
 					stream.audio.play();
@@ -208,7 +201,7 @@ Stream.prototype = {
 		//
 		this.audio.addEventListener('error',
 			function() {
-                console.log('error');
+				console.log('error');
 				toast.show('An error occurred while trying to load the stream\nThe KJHK stream requires a stable data connection');
 				//stop();
 			});
@@ -216,26 +209,26 @@ Stream.prototype = {
 		// If playback stops due to slow connection, display the loading indicator
 		this.audio.addEventListener("waiting",
 			function() {
-                console.log('waiting');
+				console.log('waiting');
 				stream.visual.load();
 			}, false);
 
 		// If playback stops due to slow connection, display the loading indicator
 		this.audio.addEventListener("stalled",
 			function() {
-                console.log('stalled');
+				console.log('stalled');
 				toast.show('Playback has stalled<br>You may need to update your <a href="#" onclick="var event = arguments[0] || window.event; event.stopPropagation(); window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">Webview</a>');
 			}, false);
 
 		// Make sure that the pause button appears and loading indicator is hidden on playback
 		this.audio.addEventListener("playing",
 			function() {
-                console.log('playing');
+				console.log('playing');
 				stream.visual.play();
 			}, false);
 		// Stop the stream when paused (like when the pause button is pressed from the iOS lock screen)
 		this.audio.addEventListener("pause", function() {
-            console.log('pause');
+			console.log('pause');
 			stream.stop();
 		}, false);
 		// Make sure that the pause button appears and loading indicator is hidden on playback
@@ -243,23 +236,23 @@ Stream.prototype = {
 			function() {
 				stream.visual.play();
 			}, false);
-        this.audio.addEventListener("durationchange",
-            function() {
-                console.log('durationchange');
-            }, false);
-        this.audio.addEventListener("loadstart",
-            function() {
-                console.log('loadstart');
-            }, false);
-        this.audio.addEventListener("waiting",
-            function() {
-                console.log('waiting');
-            }, false);
-    	this.playing = true;
+		this.audio.addEventListener("durationchange",
+			function() {
+				console.log('durationchange');
+			}, false);
+		this.audio.addEventListener("loadstart",
+			function() {
+				console.log('loadstart');
+			}, false);
+		this.audio.addEventListener("waiting",
+			function() {
+				console.log('waiting');
+			}, false);
+		this.playing = true;
 	},
 
 	stop: function() {
-        window.clearInterval(this.interval);
+		window.clearInterval(this.interval);
 		//Destroy the <audio> element so that it doesn't keep using data while paused
 		this.audio.pause();
 		source = this.audio.firstElementChild;
@@ -267,7 +260,13 @@ Stream.prototype = {
 		this.audio.load();
 		document.getElementById('audioplayer').removeChild(this.audio);
 		this.audio = null; //This deletes all associated event listeners as well
-		clearTimeout(this.timeout);
+		if (this.context) {
+			clearInterval(this.interval);
+			delete this.mediasource;
+			delete this.analyser;
+			delete this.delay;
+			delete this.interval;
+		}
 		this.visual.pause();
 		this.playing = false;
 	},
@@ -282,26 +281,25 @@ Stream.prototype = {
 		}
 	},
 
-    processAudio: function() {
-        var len = 200;
-        // var len = stream.analyser.frequencyBinCount;
-        var arr = new Uint8Array(len);
-        stream.analyser.getByteTimeDomainData(arr);
-        arr = Array.from(arr);
-        var sum = 0;
-        var i;
-        var iter = 3;
-        for(i = 0; i < len; i += iter) {
-            sum += Math.abs(arr[i] - 128);
-        }
-        var avg = sum/(i/iter);
-        avg = 10 + (avg * (avg / 4));
-        if(avg > 50) {
-            avg -= (avg % 50) * 0.75;
-        }
-        console.log(avg);
-        $('#bounce').css('border-width', avg);
-    }
+	processAudio: function() {
+		var len = stream.analyser.frequencyBinCount;
+		var arr = new Uint8Array(len);
+		stream.analyser.getByteTimeDomainData(arr);
+		arr = Array.from(arr);
+		var sum = 0;
+		for (var i = 4; i < len; ++i) { //sum from 4 to avoid adding low frequency data, (which is mostly noise)
+			sum += Math.abs(128 - arr[i]);
+		}
+		stream.queue.shift();
+		stream.queue.push(sum);
+		var avg = (stream.queue.reduce(function(pre, cur) {
+			return pre + cur;
+		}) / stream.queue.length);
+
+		width = 20 * Math.log10(sum);
+		// console.log(sum.toPrecision(4) + ' : ' + avg.toPrecision(4) + ' : ' + width.toPrecision(4));
+		$('#bounce').css('border-width', (width > 10) ? width : 10);
+	}
 };
 
 var stream = new Stream();
@@ -398,21 +396,22 @@ Playlists.prototype = {
 	getMusicLogs: function(day) {
 		jQuery.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function(data) {
 			var logs = '';
-			var iter = false;
-			$.each(data.logs, function(key, entry) {
-				var bgClass = iter ? 'bg-1' : 'bg-2';
-				iter = !iter;
+			if (data.logs.length === 0) {
+				logs = '<div class="music-entry bg-1"><p class="music-entry-details">No playlists found<br></p></div>';
+			}
+			for (var i = 0; i < data.logs.length; ++i) {
+				var bgClass = (i % 2) ? 'bg-1' : 'bg-2';
 				var items = [];
 				items.push('<div class="music-entry ' + bgClass + '">');
-				var myDate = playlists.getCleanDate(entry.Entry_Date);
+				var myDate = playlists.getCleanDate(data.logs[i].Entry_Date);
 				var dateStr = playlists.getTwelveHourTime(myDate.getHours(), myDate.getMinutes());
 
 				items.push('<h5 class="music-entry-time">' + dateStr + '</h5>');
-				items.push('<p class="music-entry-details">' + entry.Song + '<br> by ' + entry.Artist + '<br><i>from ' + entry.Album + '</i></p>');
+				items.push('<p class="music-entry-details">' + data.logs[i].Song + '<br> by ' + data.logs[i].Artist + '<br><i>from ' + data.logs[i].Album + '</i></p>');
 
 				items.push('</div>');
 				logs += items.join('');
-			});
+			}
 			playlists.playlistSlides[day].innerHTML = logs;
 		});
 	},
@@ -420,21 +419,22 @@ Playlists.prototype = {
 	preload: function() {
 		jQuery.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=0", function(data) {
 			var logs = '';
-			var iter = false;
-			$.each(data.logs, function(key, entry) {
-				var bgClass = iter ? 'bg-1' : 'bg-2';
-				iter = !iter;
+			if (data.logs.length === 0) {
+				logs = '<div class="music-entry bg-1"><p class="music-entry-details">No playlists found<br></p></div>';
+			}
+			for (var i = 0; i < data.logs.length; ++i) {
+				var bgClass = (i % 2) ? 'bg-1' : 'bg-2';
 				var items = [];
 				items.push('<div class="music-entry ' + bgClass + '">');
-				var myDate = playlists.getCleanDate(entry.Entry_Date);
+				var myDate = playlists.getCleanDate(data.logs[i].Entry_Date);
 				var dateStr = playlists.getTwelveHourTime(myDate.getHours(), myDate.getMinutes());
 
 				items.push('<h5 class="music-entry-time">' + dateStr + '</h5>');
-				items.push('<p class="music-entry-details">' + entry.Song + '<br> by ' + entry.Artist + '<br><i>from ' + entry.Album + '</i></p>');
+				items.push('<p class="music-entry-details">' + data.logs[i].Song + '<br> by ' + data.logs[i].Artist + '<br><i>from ' + data.logs[i].Album + '</i></p>');
 
 				items.push('</div>');
 				logs += items.join('');
-			});
+			}
 			playlists.preloadSlide = logs;
 		});
 	},
@@ -468,8 +468,23 @@ Playlists.prototype = {
 		} else {
 			this.logDay += num;
 		}
-		if (this.logDay === 0) this.getMusicLogs(this.logDay);
-		if (this.logDay < 13 && this.playlistSlides[this.logDay + 1].innerHTML === '') this.getMusicLogs(this.logDay + 1);
+		if (this.logDay === 0) {
+			this.getMusicLogs(this.logDay);
+			$('#music-logs-next').addClass('disabled');
+			$('#music-logs-prev').removeClass('disabled');
+		} else if (this.logDay == 13) {
+			$('#music-logs-next').removeClass('disabled');
+			$('#music-logs-prev').addClass('disabled');
+		} else {
+			$('#music-logs-next').removeClass('disabled');
+			$('#music-logs-prev').removeClass('disabled');
+		}
+		if (this.logDay < 13 && this.playlistSlides[this.logDay + 1].innerHTML === '') {
+			this.getMusicLogs(this.logDay + 1);
+		}
+		if (this.logDay < 12 && this.playlistSlides[this.logDay + 2].innerHTML === '') {
+			this.getMusicLogs(this.logDay + 2);
+		}
 		this.transitionSlide(this.playlistSlides[this.logDay]);
 		this.updateDate();
 	},

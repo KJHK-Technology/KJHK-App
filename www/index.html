@@ -42,7 +42,7 @@
           </div>
           <div id="audioUI">
             <div id="play-pause-container">
-              <div id="bounce"></div>
+              <div id="bounce" onclick="stream.play_pause()"></div>
               <div id="play-pause-mask" class="ng-hide" onclick="stream.play_pause()">
                 <img src="img/spinner.svg" width="250px" height="250px" id="stream-spinner">
               </div>
@@ -72,10 +72,10 @@
             </div>
             <div id="music-logs-buttons">
               <div ng-click="swipeRight()" class="music-logs-button" id="music-logs-prev">
-                <div class="ion-ios-arrow-left" style="font-size: 40px; text-align: center;"></div>
+                <div class="ion-ios-arrow-back" style="font-size: 40px; text-align: center;"></div>
               </div>
-              <div ng-click="swipeLeft()" class="music-logs-button" id="music-logs-next">
-                <div class="ion-ios-arrow-right" style="font-size: 40px; text-align: center;"></div>
+              <div ng-click="swipeLeft()" class="music-logs-button disabled" id="music-logs-next">
+                <div class="ion-ios-arrow-forward" style="font-size: 40px; text-align: center;"></div>
               </div>
             </div>
           </div>
