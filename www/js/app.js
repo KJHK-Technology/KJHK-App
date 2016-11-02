@@ -25,7 +25,6 @@ angular.module('ionicApp', ['ionic']).config(function($ionicConfigProvider) {
 angular.module('KJHK')
 	.controller('StreamController', function($scope, $http) {
 		$scope.streamInit = function() {
-			console.log('Initializing Stream...');
 
 		};
 	});
@@ -34,12 +33,10 @@ angular.module('KJHK')
 angular.module('KJHK')
 	.controller('PlaylistsController', function($scope, $http, $ionicScrollDelegate) {
 		$scope.playlistsInit = function() {
-			console.log('Initializing Playlists...');
 			playlists.playlistSlides[0].innerHTML = playlists.preloadSlide;
 			playlists.loadPlaylists();
 		};
 		$scope.playlistRefresh = function() {
-			console.log('Refreshing playlist');
 			playlists.changeDay(0);
 			$scope.$broadcast('scroll.refreshComplete');
 		};
@@ -184,7 +181,6 @@ Stream.prototype = {
 		this.timeout = setTimeout(function() {
 			stream.audio.addEventListener('canplay',
 				function() {
-					console.log('canplay');
 					stream.visual.play();
 					stream.audio.play();
 				});
@@ -194,7 +190,6 @@ Stream.prototype = {
 		// gaps in playback
 		this.audio.addEventListener('canplaythrough',
 			function() {
-				console.log('canplaythrough');
 				if (stream.audio.played.length === 0) {
 					clearTimeout(stream.timeout);
 					stream.audio.play();
@@ -204,7 +199,6 @@ Stream.prototype = {
 		//
 		this.audio.addEventListener('error',
 			function() {
-				console.log('error');
 				toast.show('An error occurred while trying to load the stream\nThe KJHK stream requires a stable data connection');
 				//stop();
 			});
@@ -212,26 +206,22 @@ Stream.prototype = {
 		// If playback stops due to slow connection, display the loading indicator
 		this.audio.addEventListener("waiting",
 			function() {
-				console.log('waiting');
 				stream.visual.load();
 			}, false);
 
 		// If playback stops due to slow connection, display the loading indicator
 		this.audio.addEventListener("stalled",
 			function() {
-				console.log('stalled');
 				toast.show('Playback has stalled<br>You may need to update your <a href="#" onclick="var event = arguments[0] || window.event; event.stopPropagation(); window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">Webview</a>');
 			}, false);
 
 		// Make sure that the pause button appears and loading indicator is hidden on playback
 		this.audio.addEventListener("playing",
 			function() {
-				console.log('playing');
 				stream.visual.play();
 			}, false);
 		// Stop the stream when paused (like when the pause button is pressed from the iOS lock screen)
 		this.audio.addEventListener("pause", function() {
-			console.log('pause');
 			stream.stop();
 		}, false);
 		// Make sure that the pause button appears and loading indicator is hidden on playback
@@ -241,15 +231,12 @@ Stream.prototype = {
 			}, false);
 		this.audio.addEventListener("durationchange",
 			function() {
-				console.log('durationchange');
 			}, false);
 		this.audio.addEventListener("loadstart",
 			function() {
-				console.log('loadstart');
 			}, false);
 		this.audio.addEventListener("waiting",
 			function() {
-				console.log('waiting');
 			}, false);
 		this.playing = true;
 	},
@@ -300,7 +287,6 @@ Stream.prototype = {
 		}) / stream.queue.length);
 
 		width = 20 * Math.log10(sum);
-		// console.log(sum.toPrecision(4) + ' : ' + avg.toPrecision(4) + ' : ' + width.toPrecision(4));
 		$('#bounce').css('border-width', (width > 10) ? width : 10);
 	}
 };
