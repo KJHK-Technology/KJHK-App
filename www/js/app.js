@@ -1,7 +1,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'KJHK' is the name of this angular module (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('KJHK', ['ionic'])
+var app = angular.module('KJHK', ['ionic'])
 	.run(function($ionicPlatform) {
 		$ionicPlatform.ready(function() {
 			if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -22,43 +22,40 @@ angular.module('ionicApp', ['ionic']).config(function($ionicConfigProvider) {
 	$ionicConfigProvider.scrolling.jsScrolling(true);
 });
 
-angular.module('KJHK')
-	.controller('StreamController', function($scope, $http) {
-		$scope.streamInit = function() {
+app.controller('StreamController', function($scope, $http) {
+	$scope.streamInit = function() {
 
-		};
-	});
+	};
+});
 
 // This handles all the playlist angular UI functions
-angular.module('KJHK')
-	.controller('PlaylistsController', function($scope, $http, $ionicScrollDelegate) {
-		$scope.playlistsInit = function() {
-			playlists.playlistSlides[0].innerHTML = playlists.preloadSlide;
-			playlists.loadPlaylists();
-		};
-		$scope.playlistRefresh = function() {
-			playlists.changeDay(0);
-			$scope.$broadcast('scroll.refreshComplete');
-		};
-		$scope.playlistsResize = function() {
-			$ionicScrollDelegate.resize();
-		};
-		$scope.swipeRight = function() {
-			playlists.changeDay(1);
-			$scope.scrollToTop();
-		};
-		$scope.swipeLeft = function() {
-			playlists.changeDay(-1);
-			$scope.scrollToTop();
-		};
-		$scope.scrollToTop = function() {
-			$ionicScrollDelegate.$getByHandle('logs').scrollTop();
-		};
-	});
-angular.module('KJHK')
-	.controller('ContactController', function($scope, $http) {
-		$scope.contactInit = function() {};
-	});
+app.controller('PlaylistsController', function($scope, $http, $ionicScrollDelegate) {
+	$scope.playlistsInit = function() {
+		playlists.playlistSlides[0].innerHTML = playlists.preloadSlide;
+		playlists.loadPlaylists();
+	};
+	$scope.playlistRefresh = function() {
+		playlists.changeDay(0);
+		$scope.$broadcast('scroll.refreshComplete');
+	};
+	$scope.playlistsResize = function() {
+		$ionicScrollDelegate.resize();
+	};
+	$scope.swipeRight = function() {
+		playlists.changeDay(1);
+		$scope.scrollToTop();
+	};
+	$scope.swipeLeft = function() {
+		playlists.changeDay(-1);
+		$scope.scrollToTop();
+	};
+	$scope.scrollToTop = function() {
+		$ionicScrollDelegate.$getByHandle('logs').scrollTop();
+	};
+});
+app.controller('ContactController', function($scope, $http) {
+	$scope.contactInit = function() {};
+});
 
 /****** TOAST ******/
 
@@ -105,6 +102,7 @@ function Stream() {
 	} catch (e) {
 		toast.show('For the best KJHK app experience, please update your <a href="#" onclick="window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">webview</a>');
 		this.context = false;
+		$('#bounce').addClass('ng-hide');
 	}
 
 	this.src = 'http://kjhkstream.org/stream_low';
@@ -113,17 +111,23 @@ function Stream() {
 	this.queue = [0, 0, 0, 0];
 
 	this.visual = {
+		state: 'pause',
 		play: function() {
 			$('#bounce').removeClass('off');
 			$('#stream-spinner').addClass('ng-hide');
 			$('#play-pause-mask').addClass('ng-hide');
 			$('#pause-button').removeClass('loading');
 			$('#bounce').removeClass('loading');
+			if(this.state != 'play') {
+				cordova.plugins.backgroundMode.enable();
+				console.log('background-mode: enabled');
+			}
+			this.state = 'play';
 		},
 
 		load: function() {
+			this.state = 'load';
 			$('#bounce').addClass('loading');
-
 			$('#play-button').addClass('ng-hide');
 			$('#pause-button').addClass('loading');
 			$('#pause-button').removeClass('ng-hide');
@@ -139,8 +143,20 @@ function Stream() {
 			$('#play-pause-mask').addClass('ng-hide');
 			$('#pause-button').addClass('ng-hide');
 			$('#play-button').removeClass('ng-hide');
+			if(this.state != 'pause') {
+				cordova.plugins.backgroundMode.disable();
+				console.log('background-mode: disabled');
+			}
+			this.state = 'pause';
 		}
 	};
+
+	cordova.plugins.backgroundMode.setDefaults({
+		title: '90.7fm KJHK',
+		ticker: '90.7fm KJHK',
+		text: '',
+		icon: 'statusicon'
+	});
 
 	// Used to force a play attempt after 15 seconds if loading is going slowly
 	this.timeout = null;
@@ -230,13 +246,14 @@ Stream.prototype = {
 				stream.visual.play();
 			}, false);
 		this.audio.addEventListener("durationchange",
-			function() {
-			}, false);
+			function() {}, false);
 		this.audio.addEventListener("loadstart",
-			function() {
-			}, false);
+			function() {}, false);
 		this.audio.addEventListener("waiting",
+			function() {}, false);
+		document.addEventListener("visibilityChange",
 			function() {
+				console.log("visibilityChange");
 			}, false);
 		this.playing = true;
 	},
@@ -291,8 +308,7 @@ Stream.prototype = {
 	}
 };
 
-var stream = new Stream();
-
+var stream;
 
 /**
  * Updates the current song playing (displayed underneath play/pause button)
@@ -300,15 +316,40 @@ var stream = new Stream();
 function updateCurrentSong() {
 	jQuery.getJSON("http://kjhk.org/web/app_resources/nowPlaying.php", function(data) {
 		if (!data.error) {
-			document.getElementById('nowplaying-song').innerHTML = data.song;
-			document.getElementById('nowplaying-artist').innerHTML = data.artist;
+			if (data.song != $('#nowplaying-song').html()) {
+				document.getElementById('nowplaying-song').innerHTML = data.song;
+				document.getElementById('nowplaying-artist').innerHTML = data.artist;
+				console.log(data);
+				if(data.artist !== undefined && data.album !== undefined && data.song !== undefined) {
+					console.log(data.artist + ' - ' + data.song + '\n' + data.album);
+					updateNotification(data.artist, data.album, data.song); //TODO: reintegrate this
+				}
+			}
 		} else { // Try this as a backup
 			jQuery.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php", function(data) {
-				document.getElementById('nowplaying-song').innerHTML = data.logs[0].Song;
-				document.getElementById('nowplaying-artist').innerHTML = data.logs[0].Artist;
+				if (data.logs[0].Song != $('#nowplaying-song').html()) {
+
+					document.getElementById('nowplaying-song').innerHTML = data.logs[0].Song;
+					document.getElementById('nowplaying-artist').innerHTML = data.logs[0].Artist;
+					console.log(data.logs[0]);
+					if(data.logs[0].Artist !== undefined && data.logs[0].Album !== undefined && data.logs[0].Song !== undefined) {
+						console.log(data.logs[0].Artist + ' - ' + data.logs[0].Song + '\n' + data.logs[0].Album);
+						updateNotification(data.logs[0].Artist, data.logs[0].Album, data.logs[0].Song); //TODO: reintegrate this
+					}
+				}
 			});
 		}
 	});
+}
+
+function updateNotification(artist, album, song) {
+	//TODO: reintegrate this
+	cordova.plugins.backgroundMode.setDefaults({
+		title: song + ' - ' + artist,
+		ticker: song + ' - ' + artist,
+		text: album
+	});
+	cordova.plugins.backgroundMode.configure({});
 }
 
 /******PLAYLISTS******/
@@ -402,7 +443,7 @@ Playlists.prototype = {
 				logs += items.join('');
 			}
 			playlists.playlistSlides[day].innerHTML = logs;
-			if($(playlists.playlistSlides[day]).hasClass('active')) {
+			if ($(playlists.playlistSlides[day]).hasClass('active')) {
 				//resize scroll
 				angular.element($('#music-logs-container')[0]).scope().playlistsResize();
 			}
@@ -505,9 +546,12 @@ Playlists.prototype = {
 
 var playlists = new Playlists();
 
-updateCurrentSong();
-
 playlists.preload();
+
+document.addEventListener('deviceready', function() {
+	updateCurrentSong();
+	stream = new Stream();
+});
 
 window.setInterval(function() {
 	updateCurrentSong();
