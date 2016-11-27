@@ -106,7 +106,6 @@ function Stream() {
 	}
 
 	this.src = 'http://kjhkstream.org/stream_low';
-	// this.src = 'wildfire.mp3';
 
 	this.queue = [0, 0, 0, 0];
 
@@ -119,7 +118,9 @@ function Stream() {
 			$('#pause-button').removeClass('loading');
 			$('#bounce').removeClass('loading');
 			if(this.state != 'play') {
-				cordova.plugins.backgroundMode.enable();
+				if(window.cordova && window.cordova.plugins.backgroundMode) {
+					cordova.plugins.backgroundMode.enable();
+				}
 				console.log('background-mode: enabled');
 			}
 			this.state = 'play';
@@ -144,19 +145,23 @@ function Stream() {
 			$('#pause-button').addClass('ng-hide');
 			$('#play-button').removeClass('ng-hide');
 			if(this.state != 'pause') {
-				cordova.plugins.backgroundMode.disable();
+				if(window.cordova && window.cordova.plugins.backgroundMode) {
+					cordova.plugins.backgroundMode.disable();
+				}
 				console.log('background-mode: disabled');
 			}
 			this.state = 'pause';
 		}
 	};
 
-	cordova.plugins.backgroundMode.setDefaults({
-		title: '90.7fm KJHK',
-		ticker: '90.7fm KJHK',
-		text: '',
-		icon: 'statusicon'
-	});
+	if(window.cordova && window.cordova.plugins.backgroundMode) {
+		cordova.plugins.backgroundMode.setDefaults({
+			title: '90.7fm KJHK',
+			ticker: '90.7fm KJHK',
+			text: '',
+			icon: 'statusicon'
+		});
+	}
 
 	// Used to force a play attempt after 15 seconds if loading is going slowly
 	this.timeout = null;
@@ -322,7 +327,7 @@ function updateCurrentSong() {
 				console.log(data);
 				if(data.artist !== undefined && data.album !== undefined && data.song !== undefined) {
 					console.log(data.artist + ' - ' + data.song + '\n' + data.album);
-					updateNotification(data.artist, data.album, data.song); //TODO: reintegrate this
+					updateNotification(data.artist, data.album, data.song);
 				}
 			}
 		} else { // Try this as a backup
@@ -334,7 +339,7 @@ function updateCurrentSong() {
 					console.log(data.logs[0]);
 					if(data.logs[0].Artist !== undefined && data.logs[0].Album !== undefined && data.logs[0].Song !== undefined) {
 						console.log(data.logs[0].Artist + ' - ' + data.logs[0].Song + '\n' + data.logs[0].Album);
-						updateNotification(data.logs[0].Artist, data.logs[0].Album, data.logs[0].Song); //TODO: reintegrate this
+						updateNotification(data.logs[0].Artist, data.logs[0].Album, data.logs[0].Song);
 					}
 				}
 			});
@@ -343,13 +348,14 @@ function updateCurrentSong() {
 }
 
 function updateNotification(artist, album, song) {
-	//TODO: reintegrate this
-	cordova.plugins.backgroundMode.setDefaults({
-		title: song + ' - ' + artist,
-		ticker: song + ' - ' + artist,
-		text: album
-	});
-	cordova.plugins.backgroundMode.configure({});
+	if(window.cordova && window.cordova.plugins.backgroundMode) {
+		cordova.plugins.backgroundMode.setDefaults({
+			title: song + ' - ' + artist,
+			ticker: song + ' - ' + artist,
+			text: album
+		});
+		cordova.plugins.backgroundMode.configure({});
+	}
 }
 
 /******PLAYLISTS******/
