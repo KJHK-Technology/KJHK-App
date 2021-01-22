@@ -12,8 +12,9 @@ angular.module('KJHK', ['ionic'])
         // Ionic handles this internally for a much nicer keyboard experience.
         cordova.plugins.Keyboard.disableScroll(true);
       }
-      if (window.StatusBar) {
-        StatusBar.styleDefault();
+      if(window.StatusBar) {
+        StatusBar.overlaysWebView(true);
+        StatusBar.style(1); //Light
       }
     });
   });
@@ -107,7 +108,7 @@ function Stream() {
     this.context = false;
   }
 
-  this.src = 'http://kjhkstream.org/stream_low';
+  this.src = 'https://streamingv2.shoutcast.com/kjhk_128.mp3';
 
   this.queue = [0, 0, 0, 0];
 
@@ -262,6 +263,7 @@ Stream.prototype = {
   play_pause: function() {
     var source;
     if (!this.playing) {
+      updateCurrentSong();
       this.play();
     } else {
       this.stop();
@@ -297,14 +299,22 @@ var stream = new Stream();
  * Updates the current song playing (displayed underneath play/pause button)
  */
 function updateCurrentSong() {
-  $.getJSON("http://kjhk.org/web/app_resources/nowPlaying.php", function(data) {
+  jQuery.getJSON("https://kjhk.org/web/app_resources/nowPlaying.php", function(data) {
     if (!data.error) {
+      console.log("WE IN THIS BOY");
       document.getElementById('nowplaying-song').innerHTML = elipsify(data.song, 40);
       document.getElementById('nowplaying-artist').innerHTML = elipsify(data.artist, 40);
     } else { // Try this as a backup
-      $.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php", function(data) {
-        document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
-        document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
+      console.log("BACKUP");
+      jQuery.getJSON("https://kjhk.org/web/app_resources/appMusicLogs.php?day=0", function(data) {
+        if(!data.error){
+          document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
+          document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
+        }
+        else{
+          console.log("WE REALLY DID FAIL");
+        }
+
       });
     }
   });
@@ -399,11 +409,15 @@ Playlists.prototype = {
    * @param {number} day The number of days ago logs are to be retrieved from (from 0-13)
    */
   getMusicLogs: function(day) {
-    jQuery.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function(data) {
+    jQuery.getJSON("https://kjhk.org/web/app_resources/appMusicLogs.php?day=" + day, function(data) {
       var logs = '';
       if (data.logs.length === 0) {
         logs = '<div class="music-entry bg-1"><p class="music-entry-details">No playlists found<br></p></div>';
       }
+      // if(day == 0){
+      //   document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
+      //   document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
+      // }
       for (var i = 0; i < data.logs.length; ++i) {
         var bgClass = (i % 2) ? 'bg-1' : 'bg-2';
         var items = [];
@@ -424,11 +438,13 @@ Playlists.prototype = {
   },
 
   preload: function() {
-    jQuery.getJSON("http://kjhk.org/web/app_resources/appMusicLogs.php?day=0", function(data) {
+    jQuery.getJSON("https://kjhk.org/web/app_resources/appMusicLogs.php?day=0", function(data) {
       var logs = '';
       if (data.logs.length === 0) {
         logs = '<div class="music-entry bg-1"><p class="music-entry-details">No playlists found<br></p></div>';
       }
+      // document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
+      // document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
       for (var i = 0; i < data.logs.length; ++i) {
         var bgClass = (i % 2) ? 'bg-1' : 'bg-2';
         var items = [];
