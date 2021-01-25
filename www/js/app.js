@@ -107,7 +107,7 @@ function Stream() {
     this.context = false;
   }
 
-  this.src = 'http://kjhkstream.org/stream_low';
+  this.src = 'https://streamingv2.shoutcast.com/kjhk_128.mp3';
 
   this.queue = [0, 0, 0, 0];
 
