@@ -97,54 +97,80 @@ var toast = {
 
 function Stream() {
 
-  this.audio = null; //The Element object of the <audio> element, set to null when the stream is paused
+	this.audio = null; //The Element object of the <audio> element, set to null when the stream is paused
 
-  try {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    this.context = new AudioContext();
-  } catch (e) {
-    toast.show('For the best KJHK app experience, please update iOS');
-    this.context = false;
-  }
+	// Used to keep track of whether the stream is playing or not
+	this.playing = false;
 
-  this.src = 'https://streamingv2.shoutcast.com/kjhk_128.mp3';
+	try {
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		this.context = new AudioContext();
+	} catch (e) {
+		toast.show('For the best KJHK app experience, please update your <a href="#" onclick="window.open(\'https://play.google.com/store/apps/details?id=com.google.android.webview\', \'_system\', \'location=true\')">webview</a>');
+		this.context = false;
+		$('#bounce').addClass('ng-hide');
+	}
 
-  this.queue = [0, 0, 0, 0];
+	this.src = 'https://streamingv2.shoutcast.com/kjhk_128.mp3';
 
-  // Used to keep track of whether the stream is playing or not
-  this.playing = false;
+	this.queue = [0, 0, 0, 0];
 
-  this.visual = {
-    play: function() {
-      $('#stream-spinner').addClass('ng-hide');
-      $('#play-pause-mask').addClass('ng-hide');
-      $('#pause-button').removeClass('loading');
-      $('#bounce').removeClass('loading');
-    },
+	this.visual = {
+		state: 'pause',
+		play: function() {
+			$('#bounce').removeClass('off');
+			$('#stream-spinner').addClass('ng-hide');
+			$('#play-pause-mask').addClass('ng-hide');
+			$('#pause-button').removeClass('loading');
+			$('#bounce').removeClass('loading');
+			if(this.state != 'play') {
+				if(window.cordova && window.cordova.plugins.backgroundMode) {
+					cordova.plugins.backgroundMode.enable();
+				}
+				console.log('background-mode: enabled');
+			}
+			this.state = 'play';
+		},
 
-    load: function() {
-      $('#play-button').addClass('ng-hide');
-      $('#pause-button').addClass('loading');
-      $('#pause-button').removeClass('ng-hide');
-      $('#play-pause-mask').removeClass('ng-hide');
-      $('#stream-spinner').removeClass('ng-hide');
-      $('#bounce').addClass('loading');
-    },
+		load: function() {
+			this.state = 'load';
+			$('#bounce').addClass('loading');
+			$('#play-button').addClass('ng-hide');
+			$('#pause-button').addClass('loading');
+			$('#pause-button').removeClass('ng-hide');
+			$('#play-pause-mask').removeClass('ng-hide');
+			$('#stream-spinner').removeClass('ng-hide');
+		},
+		pause: function() {
+			stream.queue = [0, 0, 0, 0];
+			$('#bounce').addClass('off');
+			$('#bounce').css('border-width', 10);
+			$('#bounce').removeClass('loading');
+			$('#stream-spinner').addClass('ng-hide');
+			$('#play-pause-mask').addClass('ng-hide');
+			$('#pause-button').addClass('ng-hide');
+			$('#play-button').removeClass('ng-hide');
+			if(this.state != 'pause') {
+				if(window.cordova && window.cordova.plugins.backgroundMode) {
+					cordova.plugins.backgroundMode.disable();
+				}
+				console.log('background-mode: disabled');
+			}
+			this.state = 'pause';
+		}
+	};
 
-    pause: function() {
-      stream.queue = [0, 0, 0, 0];
-      $('#bounce').addClass('off');
-      $('#bounce').css('border-width', 10);
-      $('#bounce').removeClass('loading');
-      $('#stream-spinner').addClass('ng-hide');
-      $('#play-pause-mask').addClass('ng-hide');
-      $('#pause-button').addClass('ng-hide');
-      $('#play-button').removeClass('ng-hide');
-    }
-  };
+	if(window.cordova && window.cordova.plugins.backgroundMode) {
+		cordova.plugins.backgroundMode.setDefaults({
+			title: '90.7fm KJHK',
+			ticker: '90.7fm KJHK',
+			text: '',
+			icon: 'statusicon'
+		});
+	}
 
-  // Used to force a play attempt after 15 seconds if loading is going slowly
-  this.timeout = null;
+	// Used to force a play attempt after 15 seconds if loading is going slowly
+	this.timeout = null;
 }
 
 Stream.prototype = {

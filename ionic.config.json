@@ -1,6 +1,5 @@
 {
-  "name": "KJHK",
-  "integrations": {
+  "name": "kjhk",  "integrations": {
     "cordova": {}
   },
   "type": "ionic1",
