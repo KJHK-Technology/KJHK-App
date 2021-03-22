@@ -299,26 +299,25 @@ var stream = new Stream();
  * Updates the current song playing (displayed underneath play/pause button)
  */
 function updateCurrentSong() {
-  jQuery.getJSON("https://kjhk.org/web/app_resources/nowPlaying.php", function(data) {
-    if (!data.error) {
-      console.log("WE IN THIS BOY");
-      document.getElementById('nowplaying-song').innerHTML = elipsify(data.song, 40);
-      document.getElementById('nowplaying-artist').innerHTML = elipsify(data.artist, 40);
-    } else { // Try this as a backup
-      console.log("BACKUP");
       jQuery.getJSON("https://kjhk.org/web/app_resources/appMusicLogs.php?day=0", function(data) {
         if(!data.error){
-          document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
-          document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
+          if(data.logs[0].Song == undefined || data.logs[0].Artist == undefined){
+            document.getElementById('nowplaying-song').innerHTML = "";
+            document.getElementById('nowplaying-artist').innerHTML = "";
+          }
+          else {
+            sessionStorage.setItem("song", data.logs[0].Song);
+            sessionStorage.setItem("artist", data.logs[0].Artist);
+            document.getElementById('nowplaying-song').innerHTML = elipsify(sessionStorage.getItem("song"),40);
+            document.getElementById('nowplaying-artist').innerHTML = elipsify(sessionStorage.getItem("artist"),40);
+          }
         }
         else{
-          console.log("WE REALLY DID FAIL");
+          console.log("Failure getting  data");
         }
 
       });
     }
-  });
-}
 
 /**
  * Shortens strings longer than the specified length with an elipses
@@ -414,10 +413,10 @@ Playlists.prototype = {
       if (data.logs.length === 0) {
         logs = '<div class="music-entry bg-1"><p class="music-entry-details">No playlists found<br></p></div>';
       }
-      // if(day == 0){
-      //   document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
-      //   document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
-      // }
+      if(day == 0){
+        document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
+        document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
+      }
       for (var i = 0; i < data.logs.length; ++i) {
         var bgClass = (i % 2) ? 'bg-1' : 'bg-2';
         var items = [];
@@ -443,8 +442,8 @@ Playlists.prototype = {
       if (data.logs.length === 0) {
         logs = '<div class="music-entry bg-1"><p class="music-entry-details">No playlists found<br></p></div>';
       }
-      // document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
-      // document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
+      document.getElementById('nowplaying-song').innerHTML = elipsify(data.logs[0].Song, 40);
+      document.getElementById('nowplaying-artist').innerHTML = elipsify(data.logs[0].Artist, 40);
       for (var i = 0; i < data.logs.length; ++i) {
         var bgClass = (i % 2) ? 'bg-1' : 'bg-2';
         var items = [];
@@ -532,13 +531,18 @@ Playlists.prototype = {
 };
 
 var playlists = new Playlists();
-
-updateCurrentSong();
+// var song = "";
+// var artist = "";
+//updateCurrentSong();
 
 playlists.preload();
 
 window.setInterval(function() {
-  updateCurrentSong();
-}, 15000);
+  
+  $ionicHistory.clearCache().then(function(){
+    updateCurrentSong();
+   //getMusicLogs(0);
+  });
+}, 30000);
 
 /******CONTACT******/
