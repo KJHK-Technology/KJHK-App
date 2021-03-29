@@ -4669,7 +4669,8 @@ a.subdued {
 
 .tabs-striped.tabs-background-dark .tabs {
   background-color: #070A0A;
-  background-image: none; }
+  background-image: none;
+  padding-top: 5px; }
 
 .tabs-striped.tabs-color-light .tab-item {
   color: rgba(219, 224, 227, 0.4);

@@ -3,9 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-
-
+  <meta name="viewport" content="initial-scale=1,user-scalable=no, width=device-width, height=device-height, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="img-src * 'self' data:; default-src * 'self' gap: wss: ws: ; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
   <!-- fixes request line link styling on iOS -->
   <meta name="format-detection" content="telephone=no">
 
@@ -32,7 +31,7 @@
 <body ng-app="KJHK">
   <ion-pane>
     <ion-header-bar class="bar-dark" id="header-bar">
-      <div style="width: 100%;"><img height="34px" src="img/kjhk-name.svg" style="margin: 0 auto; display: block;"></div>
+      <div style="width: 100%;"><img height="34px" src="img/kjhk-name.svg" style="margin: 0 auto; margin-top: 15px; display: block;"></div>
     </ion-header-bar>
     <ion-tabs id="tab-menu" class="tabs-striped tabs-top tabs-background-dark tabs-color-light">
 
@@ -62,7 +61,7 @@
         </div>
       </ion-tab>
 
-      <ion-tab class="balanced" title="PLAYLISTS" icon-on="ion-ios-list" icon-off="ion-ios-list-outline">
+      <ion-tab class="balanced" title="LOGS" icon-on="ion-ios-list" icon-off="ion-ios-list-outline">
         <!-- Tab 2 content -->
         <div id="music-logs-container" class="content-container" ng-controller="PlaylistsController" ng-init="playlistsInit()">
           <div onclick="toast.hide();" class="toast hidden ng-hide">
@@ -108,7 +107,7 @@
           <div class="contact-label">
             REQUEST LINE:
           </div>
-          <a class="request-line-link" onclick="window.open('tel:+1-785-864-4747', '_system', 'location=true');">
+          <a class="request-line-link" onclick="cordova.InAppBrowser.open('tel:+1-785-864-4747', '_system', 'location=true');">
             <div class="request-line">
               <div class="request-line-text" style="text-decoration: none; color: #FFFFFF; font-weight: 300;">785-864-4747</div>
             </div>
@@ -122,29 +121,29 @@
           <table class="social-media-table">
             <tr>
               <td>
-                <a href="#" class="svg" onclick="window.open('http://kjhk.org/web/', '_system', 'location=true');">
+                <a href="#" class="svg" onclick="cordova.InAppBrowser.open('http://kjhk.org/web/', '_system', 'location=true');">
                   <img src="img/kjhk-webs_DS.svg" class="social-link">
                 </a>
               </td>
               <td>
-                <a href="#" class="svg" onclick="window.open('https://www.facebook.com/KJHK907/', '_system', 'location=true')">
+                <a href="#" class="svg" onclick="cordova.InAppBrowser.open('https://www.facebook.com/KJHK907/', '_system', 'location=true');">
                   <img src="img/Facebook_DS.svg" class="social-link">
                 </a>
               </td>
               <td>
-                <a href="#" class="svg" onclick="window.open('https://twitter.com/kjhk', '_system', 'location=true')">
+                <a href="#" class="svg" onclick="cordova.InAppBrowser.open('https://twitter.com/kjhk', '_system', 'location=true');">
                   <img src="img/Twitter_DS.svg" class="social-link">
                 </a>
               </td>
             </tr>
             <tr>
               <td>
-                <a href="#" class="svg" onclick="window.open('https://www.youtube.com/channel/UCqwb8_dzDRSE5RyrgP0q-tA', '_system', 'location=true')">
+                <a href="#" class="svg" onclick="cordova.InAppBrowser.open('https://www.youtube.com/channel/UCqwb8_dzDRSE5RyrgP0q-tA', '_system', 'location=true');">
                   <img src="img/Youtube_DS.svg" class="social-link">
                 </a>
               </td>
               <td>
-                <a href="#" class="svg" onclick="window.open('https://www.instagram.com/kjhk90_7', '_system', 'location=true')">
+                <a href="#" class="svg" onclick="cordova.InAppBrowser.open('https://www.instagram.com/kjhk90_7', '_system', 'location=true');">
                   <img src="img/Instagram_DS2.svg" class="social-link">
                 </a>
               </td>
